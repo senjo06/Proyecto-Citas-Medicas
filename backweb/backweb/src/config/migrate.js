@@ -1,47 +1,39 @@
+// backend/backweb/src/config/migrate.js
 const pool = require('./db');
 
-// Agrega columnas aquí para que se creen automáticamente al arrancar
-const schema = [
-  {
-    table: 'users',
-    create: `
-      CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(100) NOT NULL,
-        email VARCHAR(150) UNIQUE NOT NULL,
-        password VARCHAR(255) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `,
-    columns: [
-      { name: 'name',       def: 'VARCHAR(100) NOT NULL' },
-      { name: 'email',      def: 'VARCHAR(150)' },
-      { name: 'password',   def: 'VARCHAR(255) NOT NULL' },
-      { name: 'created_at', def: 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP' },
-    ],
-  },
-];
-
 async function runMigrations() {
-  for (const entry of schema) {
-    await pool.query(entry.create);
-
-    const { rows } = await pool.query(
-      'SELECT column_name FROM information_schema.columns WHERE table_name = $1',
-      [entry.table]
+  console.log('Iniciando la migración de la base de datos...');
+  
+  // Ponemos todo nuestro código SQL dentro de un String de JavaScript
+  const sql = `
+    CREATE TABLE IF NOT EXISTS appointments (
+        id SERIAL PRIMARY KEY,
+        doctor_name VARCHAR(150) NOT NULL,
+        specialty VARCHAR(100) NOT NULL,
+        appointment_date DATE NOT NULL,
+        appointment_time TIME NOT NULL,
+        is_booked BOOLEAN DEFAULT FALSE,
+        user_id INT DEFAULT NULL,
+        booked_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
     );
-    const existing = rows.map((r) => r.column_name);
 
-    for (const col of entry.columns) {
-      if (!existing.includes(col.name)) {
-        await pool.query(`ALTER TABLE ${entry.table} ADD COLUMN IF NOT EXISTS ${col.name} ${col.def}`);
-        console.log(`Columna añadida: ${entry.table}.${col.name}`);
-      }
-    }
+    -- Insertamos los turnos médicos de prueba si no existen
+    INSERT INTO appointments (id, doctor_name, specialty, appointment_date, appointment_time)
+    VALUES 
+    (1, 'Dr. Camilo Namén', 'Medicina General', '2026-10-15', '08:00:00'),
+    (2, 'Dra. María Ortega', 'Pediatría', '2026-10-15', '09:30:00'),
+    (3, 'Dr. Johan Sebastián', 'Cardiología', '2026-10-16', '14:00:00')
+    ON CONFLICT (id) DO NOTHING;
+  `;
 
-    console.log(`Tabla lista: ${entry.table}`);
+  try {
+    // El pool de pg ejecuta los comandos SQL directamente en Postgres
+    await pool.query(sql);
+    console.log('¡Migración completada con éxito! Tablas de citas creadas.');
+  } catch (err) {
+    console.error('Error al ejecutar la migración de citas:', err.message);
+    throw err;
   }
-
 }
 
 module.exports = runMigrations;
