@@ -21,7 +21,10 @@ export interface BookAppointmentResponse {
   data: AppointmentSlot;
 }
 
-const API_URL = 'http://localhost:3000/api/appointments';
+// Usa el proxy de Vite en desarrollo (/api → localhost:3000/api)
+// En producción se puede sobreescribir con VITE_API_URL
+const BASE_URL = import.meta.env.VITE_API_URL ?? '';
+const API_URL = `${BASE_URL}/api/appointments`;
 
 export const AppointmentService = {
   // Obtiene los turnos médicos libres
@@ -30,7 +33,7 @@ export const AppointmentService = {
     return response.data;
   },
 
-  // Envía la solicitud para reservar bloqueando la fila
+  // Envía la solicitud para reservar bloqueando la fila con SELECT FOR UPDATE
   async bookSlot(appointmentId: number, userId: number): Promise<BookAppointmentResponse> {
     const response = await axios.post<BookAppointmentResponse>(`${API_URL}/book`, {
       appointmentId,
