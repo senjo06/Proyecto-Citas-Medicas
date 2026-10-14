@@ -4,17 +4,17 @@
     <!-- Navbar -->
     <nav class="navbar" role="navigation" aria-label="Navegación principal">
       <div class="nav-brand">
-        <span class="brand-icon" aria-hidden="true">🏥</span>
         <span class="brand-name">Citas Médicas</span>
       </div>
 
       <div class="nav-links">
-        <router-link to="/" class="nav-link" active-class="active" exact>
-          <span class="nav-icon">📅</span> Citas
-        </router-link>
-        <router-link to="/usuarios" class="nav-link" active-class="active">
-          <span class="nav-icon">👥</span> Usuarios
-        </router-link>
+        <router-link to="/citas" class="nav-link" active-class="active">Citas</router-link>
+        <router-link to="/citas/perfil" class="nav-link" active-class="active">Mi Perfil</router-link>
+      </div>
+
+      <div class="nav-user">
+        <span class="user-greeting">{{ authStore.user?.name }}</span>
+        <button class="btn-logout" @click="handleLogout">Salir</button>
       </div>
     </nav>
 
@@ -30,7 +30,7 @@
     <!-- Footer -->
     <footer class="footer">
       <div class="footer-inner">
-        <span>🏥 Sistema de Gestión de Citas Médicas</span>
+        <span>Sistema de Gestión de Citas Médicas</span>
         <span class="footer-sep">|</span>
         <span>Transacciones Pesimistas &mdash; <code>SELECT FOR UPDATE</code></span>
         <span class="footer-sep">|</span>
@@ -42,8 +42,16 @@
 </template>
 
 <script setup lang="ts">
-// MainLayout.vue usa router-link nativo de Vue Router para el manejo
-// de rutas activas, evitando duplicar lógica con useRoute/useRouter manualmente.
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '../stores/auth.store';
+
+const router = useRouter();
+const authStore = useAuthStore();
+
+const handleLogout = () => {
+  authStore.logout();
+  router.push('/');
+};
 </script>
 
 <style scoped>
@@ -114,6 +122,8 @@
   border-color: white;
 }
 
+/* Botón admin con color distinto — ya no se usa, limpieza */
+
 .nav-icon {
   font-size: 1rem;
 }
@@ -169,7 +179,35 @@
   opacity: 0.3;
 }
 
-/* ── Responsive ─────────────────────────── */
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.user-greeting {
+  color: rgba(255,255,255,0.85);
+  font-size: 0.88rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.btn-logout {
+  padding: 0.4rem 0.85rem;
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.8);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  border-radius: 7px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.18s;
+  white-space: nowrap;
+}
+.btn-logout:hover {
+  background: #e53935;
+  color: white;
+  border-color: #e53935;
+}
 @media (max-width: 600px) {
   .navbar {
     padding: 0 1rem;

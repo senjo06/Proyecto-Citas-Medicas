@@ -1,6 +1,4 @@
 // backend/src/config/migrate.js
-// Ejecuta las migraciones al arrancar el servidor.
-// Usa CREATE TABLE IF NOT EXISTS para que sea idempotente (seguro de correr múltiples veces).
 const pool = require('./db');
 
 async function runMigrations() {
@@ -12,7 +10,8 @@ async function runMigrations() {
         id         SERIAL PRIMARY KEY,
         name       VARCHAR(150) NOT NULL,
         email      VARCHAR(150) NOT NULL UNIQUE,
-        password   VARCHAR(255) NOT NULL,          -- almacenado con bcrypt (hash)
+        password   VARCHAR(255) NOT NULL,
+        phone      VARCHAR(20)  DEFAULT NULL,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
     );
 
@@ -24,12 +23,49 @@ async function runMigrations() {
         appointment_date DATE         NOT NULL,
         appointment_time TIME         NOT NULL,
         is_booked        BOOLEAN      NOT NULL DEFAULT FALSE,
-        user_id          INT          DEFAULT NULL,   -- FK lógica al usuario que reservó
+        user_id          INT          DEFAULT NULL,
         booked_at        TIMESTAMP WITH TIME ZONE DEFAULT NULL
     );
 
-    -- ── Datos semilla: turnos de prueba ──────────────────────────────
-    -- ON CONFLICT (id) DO NOTHING garantiza que no se dupliquen al reiniciar
+    -- ── Tabla de notificaciones ──────────────────────────────────────
+    CREATE TABLE IF NOT EXISTS notifications (
+        id         SERIAL PRIMARY KEY,
+        user_id    INT          NOT NULL,
+        user_name  VARCHAR(150) NOT NULL,
+        message    TEXT         NOT NULL,
+        is_read    BOOLEAN      NOT NULL DEFAULT FALSE,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    );
+
+    -- ── Columna phone si no existe ───────────────────────────────────
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(20) DEFAULT NULL;
+
+    -- ── Índices para acelerar consultas frecuentes ───────────────────
+    CREATE INDEX IF NOT EXISTS idx_appt_available
+      ON appointments (appointment_date, is_booked)
+      WHERE is_booked = false;
+
+    CREATE INDEX IF NOT EXISTS idx_appt_user
+      ON appointments (user_id, appointment_date)
+      WHERE is_booked = true;
+
+    CREATE INDEX IF NOT EXISTS idx_appt_today
+      ON appointments (appointment_date, doctor_name);
+
+    CREATE INDEX IF NOT EXISTS idx_appt_booked
+      ON appointments (is_booked, booked_at DESC)
+      WHERE is_booked = true;
+
+    CREATE INDEX IF NOT EXISTS idx_users_email
+      ON users (LOWER(email));
+
+    CREATE INDEX IF NOT EXISTS idx_users_name
+      ON users (LOWER(name));
+
+    CREATE INDEX IF NOT EXISTS idx_notif_unread
+      ON notifications (is_read, created_at DESC);
+
+    -- ── Datos semilla ────────────────────────────────────────────────
     INSERT INTO appointments (id, doctor_name, specialty, appointment_date, appointment_time)
     VALUES
       (1,  'Dr. Camilo Namén',      'Medicina General',  '2026-10-15', '08:00:00'),
@@ -38,10 +74,7 @@ async function runMigrations() {
       (4,  'Dra. Laura Gómez',      'Dermatología',      '2026-10-16', '10:00:00'),
       (5,  'Dr. Andrés Martínez',   'Traumatología',     '2026-10-17', '11:00:00'),
       (6,  'Dra. Sofía Herrera',    'Ginecología',       '2026-10-17', '08:30:00'),
-      (7,  'Dr. Felipe Ruiz',       'Neurología',        '2026-10-18', '09:00:00'),
-      (8,  'Dra. Valentina Cruz',   'Oftalmología',      '2026-10-18', '15:00:00'),
-      (9,  'Dr. Ricardo Morales',   'Psiquiatría',       '2026-10-19', '10:30:00'),
-      (10, 'Dra. Claudia Vargas',   'Endocrinología',    '2026-10-19', '13:00:00')
+      (7,  'Dr. Felipe Ruiz',       'Neurología',        '2026-10-18', '09:00:00')
     ON CONFLICT (id) DO NOTHING;
   `;
 

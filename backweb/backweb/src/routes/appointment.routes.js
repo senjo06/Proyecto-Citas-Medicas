@@ -43,6 +43,21 @@ const AppointmentController = require('../controllers/appointment.controller');
  *                         type: string
  */
 router.get('/available', AppointmentController.getAvailable);
+router.get('/doctor', AppointmentController.getByDoctor);
+router.get('/today', AppointmentController.getToday);
+router.get('/my', AppointmentController.getMyAppointments);
+
+/**
+ * @swagger
+ * /api/appointments/booked:
+ *   get:
+ *     summary: Obtener turnos ya reservados con datos del paciente
+ *     tags: [Appointments]
+ *     responses:
+ *       200:
+ *         description: Lista de turnos reservados
+ */
+router.get('/booked', AppointmentController.getBooked);
 
 /**
  * @swagger
@@ -73,5 +88,25 @@ router.get('/available', AppointmentController.getAvailable);
  *         description: Turno ya reservado por otro paciente (condición de carrera)
  */
 router.post('/book', AppointmentController.book);
+
+/**
+ * @swagger
+ * /api/appointments/{id}/cancel:
+ *   delete:
+ *     summary: Cancelar una reserva — libera el turno nuevamente
+ *     tags: [Appointments]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Turno cancelado exitosamente
+ *       409:
+ *         description: El turno no existe o no estaba reservado
+ */
+router.delete('/:id/cancel', AppointmentController.cancel);
 
 module.exports = router;

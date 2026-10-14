@@ -4,14 +4,14 @@ const bcrypt = require('bcryptjs');
 const UserModel = {
   async findAll() {
     const { rows } = await pool.query(
-      'SELECT id, name, email, created_at FROM users ORDER BY id'
+      'SELECT id, name, email, phone, created_at FROM users ORDER BY id'
     );
     return rows;
   },
 
   async findById(id) {
     const { rows } = await pool.query(
-      'SELECT id, name, email, created_at FROM users WHERE id = $1',
+      'SELECT id, name, email, phone, created_at FROM users WHERE id = $1',
       [id]
     );
     return rows[0] || null;
@@ -25,19 +25,36 @@ const UserModel = {
     return rows[0] || null;
   },
 
-  async create({ name, email, password }) {
-    const hashed = await bcrypt.hash(password, 10);
+  // Busca por nombre O email — para el login flexible
+  async findByNameOrEmail(value) {
     const { rows } = await pool.query(
-      'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email, created_at',
-      [name, email, hashed]
+      'SELECT * FROM users WHERE LOWER(email) = LOWER($1) OR LOWER(name) = LOWER($1)',
+      [value]
+    );
+    return rows[0] || null;
+  },
+
+  async create({ name, email, password, phone }) {
+    const hashed = await bcrypt.hash(password, 8);
+    const { rows } = await pool.query(
+      'INSERT INTO users (name, email, password, phone) VALUES ($1, $2, $3, $4) RETURNING id, name, email, phone, created_at',
+      [name, email, hashed, phone ?? null]
     );
     return rows[0];
   },
 
-  async update(id, { name, email }) {
+  async update(id, { name, email, password, phone }) {
+    if (password) {
+      const hashed = await bcrypt.hash(password, 8);
+      const { rows } = await pool.query(
+        'UPDATE users SET name = $1, email = $2, password = $3, phone = $4 WHERE id = $5 RETURNING id, name, email, phone, created_at',
+        [name, email, hashed, phone ?? null, id]
+      );
+      return rows[0] || null;
+    }
     const { rows } = await pool.query(
-      'UPDATE users SET name = $1, email = $2 WHERE id = $3 RETURNING id, name, email, created_at',
-      [name, email, id]
+      'UPDATE users SET name = $1, email = $2, phone = $3 WHERE id = $4 RETURNING id, name, email, phone, created_at',
+      [name, email, phone ?? null, id]
     );
     return rows[0] || null;
   },

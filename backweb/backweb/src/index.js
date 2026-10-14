@@ -6,6 +6,8 @@ const swaggerSpec = require('./config/swagger');
 const runMigrations = require('./config/migrate');
 const userRoutes = require('./routes/user.routes');
 const appointmentRoutes = require('./routes/appointment.routes');
+const authRoutes = require('./routes/auth.routes');
+const notificationRoutes = require('./routes/notification.routes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -25,8 +27,10 @@ app.use(express.json());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // ── Rutas de la API ───────────────────────────────────────────────────
+app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/appointments', appointmentRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Health check
 app.get('/', (req, res) => {

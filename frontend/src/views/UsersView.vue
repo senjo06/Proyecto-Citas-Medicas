@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="users-view">
 
     <!-- Encabezado -->
@@ -10,16 +10,16 @@
     <!-- Alertas -->
     <transition name="slide-alert">
       <div v-if="userStore.successMessage" class="alert alert-success" role="alert">
-        <span>✅</span>
+        <span></span>
         <span>{{ userStore.successMessage }}</span>
-        <button class="alert-close" @click="userStore.clearMessages()">×</button>
+        <button class="alert-close" @click="userStore.clearMessages()"></button>
       </div>
     </transition>
     <transition name="slide-alert">
       <div v-if="userStore.error" class="alert alert-error" role="alert">
-        <span>⚠️</span>
+        <span></span>
         <span>{{ userStore.error }}</span>
-        <button class="alert-close" @click="userStore.clearMessages()">×</button>
+        <button class="alert-close" @click="userStore.clearMessages()"></button>
       </div>
     </transition>
 
@@ -28,7 +28,7 @@
       <!-- ── Panel formulario ── -->
       <aside class="form-panel card">
         <h2 class="panel-title">
-          {{ editingUser ? '✏️ Editar usuario' : '➕ Nuevo usuario' }}
+          {{ editingUser ? ' Editar usuario' : ' Nuevo usuario' }}
         </h2>
 
         <form @submit.prevent="handleSubmit" novalidate>
@@ -56,6 +56,17 @@
             />
           </div>
 
+          <div class="form-group">
+            <label for="phone">Teléfono</label>
+            <input
+              id="phone"
+              v-model="form.phone"
+              type="tel"
+              placeholder="Ej: +57 300 123 4567"
+              autocomplete="tel"
+            />
+          </div>
+
           <div v-if="!editingUser" class="form-group">
             <label for="password">Contraseña</label>
             <div class="input-wrapper">
@@ -69,7 +80,7 @@
                 minlength="6"
               />
               <button type="button" class="toggle-pw" @click="showPassword = !showPassword" :aria-label="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
-                {{ showPassword ? '🙈' : '👁️' }}
+                {{ showPassword ? '' : '' }}
               </button>
             </div>
             <span class="field-hint">La contraseña se almacena con hash bcrypt.</span>
@@ -90,9 +101,9 @@
       <!-- ── Panel tabla ── -->
       <section class="table-panel card">
         <div class="table-toolbar">
-          <h2 class="panel-title">👥 Usuarios registrados</h2>
+          <h2 class="panel-title"> Usuarios registrados</h2>
           <button class="btn-outline btn-sm" @click="userStore.loadUsers()" :disabled="userStore.loading">
-            🔄 Refrescar
+             Refrescar
           </button>
         </div>
 
@@ -104,7 +115,7 @@
 
         <!-- Sin datos -->
         <div v-else-if="userStore.users.length === 0" class="state-box">
-          <span class="state-emoji">👤</span>
+          <span class="state-emoji"></span>
           <p>No hay usuarios registrados aún.</p>
         </div>
 
@@ -116,6 +127,7 @@
                 <th scope="col">#</th>
                 <th scope="col">Nombre</th>
                 <th scope="col">Email</th>
+                <th scope="col">Teléfono</th>
                 <th scope="col">Registrado</th>
                 <th scope="col">Acciones</th>
               </tr>
@@ -128,10 +140,11 @@
                   {{ user.name }}
                 </td>
                 <td class="td-email">{{ user.email }}</td>
+                <td class="td-phone">{{ user.phone ?? '—' }}</td>
                 <td class="td-date">{{ formatDate(user.created_at) }}</td>
                 <td class="td-actions">
                   <button class="btn-edit" @click="startEdit(user)" title="Editar usuario">
-                    ✏️
+                    
                   </button>
                   <button
                     class="btn-delete"
@@ -139,7 +152,7 @@
                     @click="openDeleteModal(user)"
                     title="Eliminar usuario"
                   >
-                    🗑️
+                    
                   </button>
                 </td>
               </tr>
@@ -159,7 +172,7 @@
       <transition name="modal">
         <div v-if="deleteModal.visible" class="modal-overlay" @click.self="closeDeleteModal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
           <div class="modal-box">
-            <div class="modal-icon">🗑️</div>
+            <div class="modal-icon"></div>
             <h3 id="modal-title">Eliminar usuario</h3>
             <p>¿Seguro que querés eliminar a <strong>{{ deleteModal.userName }}</strong>?</p>
             <p class="modal-warning">Esta acción no se puede deshacer.</p>
@@ -187,7 +200,7 @@ const userStore = useUserStore();
 // ── Estado del formulario ──
 const editingUser = ref<User | null>(null);
 const showPassword = ref(false);
-const form = ref({ name: '', email: '', password: '' });
+const form = ref({ name: '', email: '', password: '', phone: '' });
 
 // ── Modal de borrado ──
 const deleteModal = ref({ visible: false, userId: 0, userName: '' });
@@ -206,13 +219,15 @@ const handleSubmit = async () => {
   if (editingUser.value) {
     await userStore.editUser(editingUser.value.id, {
       name: form.value.name,
-      email: form.value.email
+      email: form.value.email,
+      phone: form.value.phone || undefined
     });
   } else {
     await userStore.addUser({
       name: form.value.name,
       email: form.value.email,
-      password: form.value.password
+      password: form.value.password,
+      phone: form.value.phone || undefined
     });
   }
   if (!userStore.error) resetForm();
@@ -220,7 +235,7 @@ const handleSubmit = async () => {
 
 const startEdit = (user: User) => {
   editingUser.value = user;
-  form.value = { name: user.name, email: user.email, password: '' };
+  form.value = { name: user.name, email: user.email, password: '', phone: user.phone ?? '' };
   userStore.clearMessages();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
@@ -232,7 +247,7 @@ const cancelEdit = () => {
 };
 
 const resetForm = () => {
-  form.value = { name: '', email: '', password: '' };
+  form.value = { name: '', email: '', password: '', phone: '' };
   editingUser.value = null;
   showPassword.value = false;
 };
@@ -260,7 +275,11 @@ const formatDate = (dateStr?: string): string => {
 };
 
 const initials = (name: string): string => {
-  return name.split(' ').slice(0, 2).map(n => n[0]?.toUpperCase() ?? '').join('');
+  const parts = name.trim().split(/\s+/);
+  const first = parts[0]?.[0]?.toUpperCase() ?? '';
+  // Si hay 3+ palabras, el apellido es la palabra 2 (índice 2), si hay 2 es la palabra 1
+  const last  = (parts.length >= 3 ? parts[2] : parts[1])?.[0]?.toUpperCase() ?? '';
+  return first + last;
 };
 </script>
 
@@ -476,3 +495,4 @@ const initials = (name: string): string => {
   .layout-grid { grid-template-columns: 1fr; }
 }
 </style>
+

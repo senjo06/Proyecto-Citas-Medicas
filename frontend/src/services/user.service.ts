@@ -5,6 +5,7 @@ export interface User {
   id: number;
   name: string;
   email: string;
+  phone?: string | null;
   created_at?: string;
 }
 
@@ -12,11 +13,13 @@ export interface UserInput {
   name: string;
   email: string;
   password: string;
+  phone?: string;
 }
 
 export interface UserUpdate {
   name: string;
   email: string;
+  phone?: string;
 }
 
 export interface UserListResponse {
