@@ -264,6 +264,8 @@ const calCells = computed(() => {
     const dt  = new Date(y, m, d);
     const dow = dt.getDay();
     const str = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    // Un día es "pasado" si es anterior a hoy, o es domingo
+    // Para hoy: solo lo marcamos disponible si hay slots (el backend ya filtra por hora)
     cells.push({
       day: d, month: m, year: y,
       hasSlots: availDays.value.has(str),
@@ -362,14 +364,14 @@ const book = async (slotId: number) => {
   } finally { busy.value = false; }
 };
 
-const cancelTurn = async (appointmentId: number, reason: 'cancel' | 'change' = 'cancel') => {
+const cancelTurn = async (appointmentId: number, reason: 'cancel' | 'change' | 'silent' = 'cancel') => {
   busy.value = true;
   errorMsg.value = null;
   const apt = myAppointments.value.find(a => a.id === appointmentId);
   try {
     await axios.delete(`${BASE}/api/appointments/${appointmentId}/cancel`);
-    // Notificar al admin con mensaje diferente según el motivo
-    if (apt) {
+    // Solo notificar al admin si no es una cancelación silenciosa (interna del sistema)
+    if (apt && reason !== 'silent') {
       const action = reason === 'change'
         ? `cambió su turno con ${apt.doctor_name} (${apt.specialty}) del ${formatDate(apt.appointment_date)} a las ${formatTime(apt.appointment_time)} por otro horario.`
         : `canceló su turno con ${apt.doctor_name} (${apt.specialty}) del ${formatDate(apt.appointment_date)} a las ${formatTime(apt.appointment_time)}.`;
@@ -378,11 +380,14 @@ const cancelTurn = async (appointmentId: number, reason: 'cancel' | 'change' = '
         userName: authStore.user?.name ?? '',
         message: `${authStore.user?.name} ${action}`
       });
+    }
+    if (apt) {
       allSlots.value.push(apt);
       allSlots.value.sort((a, b) => a.appointment_date.localeCompare(b.appointment_date) || a.appointment_time.localeCompare(b.appointment_time));
     }
     myAppointments.value = myAppointments.value.filter(a => a.id !== appointmentId);
-    successMsg.value = reason === 'change' ? 'Turno liberado. Seleccioná el nuevo horario.' : 'Turno cancelado correctamente.';
+    if (reason === 'cancel') successMsg.value = 'Turno cancelado correctamente.';
+    if (reason === 'change') successMsg.value = 'Turno liberado. Seleccioná el nuevo horario.';
   } catch (err: any) {
     errorMsg.value = err.response?.data?.error || 'Error al cancelar.';
   } finally { busy.value = false; }
@@ -390,7 +395,8 @@ const cancelTurn = async (appointmentId: number, reason: 'cancel' | 'change' = '
 
 const cancelConflictAndBook = async () => {
   if (!conflictExistingId.value || !pendingSlotId.value) return;
-  await cancelTurn(conflictExistingId.value, 'change');
+  // 'silent' — no notifica al admin, es parte del flujo automático de cambio
+  await cancelTurn(conflictExistingId.value, 'silent');
   conflictVisible.value = false;
   await book(pendingSlotId.value);
 };
@@ -533,118 +539,4 @@ const initials = (name: string) => {
 
 @media (max-width: 860px) { .calendar-layout { grid-template-columns: 1fr; } }
 @media (max-width: 480px) { .page-header h1 { font-size: 1.15rem; } }
-</style>
-
-.alert { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.93rem; font-weight: 500; }
-.alert-success { background: #d4edda; color: #155724; border: 1px solid #b7dfbc; }
-.alert-error   { background: #f8d7da; color: #721c24; border: 1px solid #f1b0b7; }
-.alert-close { background: none; border: none; font-size: 1.1rem; cursor: pointer; opacity: 0.6; color: inherit; }
-.slide-alert-enter-active, .slide-alert-leave-active { transition: all 0.25s; }
-.slide-alert-enter-from, .slide-alert-leave-to { opacity: 0; transform: translateY(-8px); }
-
-/* Mis turnos */
-.my-appointments { background: #e8f0fe; border: 1.5px solid #1a73e8; border-radius: 14px; padding: 1.1rem 1.25rem; margin-bottom: 1.5rem; }
-.my-title { font-size: 0.95rem; color: #0d47a1; font-weight: 700; margin-bottom: 0.75rem; }
-.my-list { display: flex; flex-direction: column; gap: 0.6rem; }
-.my-item { background: white; border-radius: 10px; padding: 0.8rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-.my-item-info { display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap; }
-.my-doctor { font-weight: 700; color: #0d47a1; font-size: 0.93rem; }
-.my-date { font-size: 0.82rem; color: #555; }
-.my-item-actions { display: flex; gap: 0.5rem; }
-.btn-change { padding: 0.38rem 0.85rem; background: #fff3cd; color: #856404; border: 1px solid #ffc107; border-radius: 6px; font-size: 0.82rem; font-weight: 600; cursor: pointer; }
-.btn-change:hover { background: #ffc107; }
-.btn-cancel-my { padding: 0.38rem 0.85rem; background: #ffeef0; color: #c62828; border: 1px solid #ef9a9a; border-radius: 6px; font-size: 0.82rem; font-weight: 600; cursor: pointer; }
-.btn-cancel-my:hover:not(:disabled) { background: #ffcdd2; }
-.btn-cancel-my:disabled { opacity: 0.4; cursor: not-allowed; }
-
-/* Estado */
-.state-box { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; padding: 3rem; background: white; border-radius: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); color: #777; }
-
-/* Lista doctores */
-.doctors-grid { display: flex; flex-direction: column; gap: 0.75rem; }
-.doctor-card { background: white; border-radius: 14px; border: 1.5px solid #e8ecf0; padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: 1rem; cursor: pointer; transition: all 0.18s; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-.doctor-card:hover { border-color: #1a73e8; box-shadow: 0 4px 16px rgba(26,115,232,0.15); transform: translateX(4px); }
-.doctor-avatar { width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0; background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
-.doctor-avatar.lg { width: 60px; height: 60px; font-size: 1.3rem; }
-.doctor-info { flex: 1; }
-.doctor-info h3 { font-size: 1rem; font-weight: 700; color: #1a1a2e; margin-bottom: 0.3rem; }
-.doctor-slots-count { font-size: 0.8rem; color: #888; margin-top: 0.3rem; }
-.doctor-arrow { font-size: 1.5rem; color: #1a73e8; }
-
-.specialty-badge { display: inline-block; background: #e8f0fe; color: #1557b0; font-size: 0.72rem; font-weight: 700; padding: 0.15rem 0.6rem; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.4px; }
-
-/* Breadcrumb */
-.breadcrumb { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.25rem; font-size: 0.88rem; color: #888; }
-.btn-back { background: none; border: none; color: #1a73e8; font-size: 0.9rem; font-weight: 600; cursor: pointer; padding: 0; }
-.btn-back:hover { text-decoration: underline; }
-
-/* Doctor header */
-.doctor-header-card { display: flex; align-items: center; gap: 1rem; background: white; border-radius: 14px; padding: 1.1rem 1.25rem; margin-bottom: 1.25rem; border: 1px solid #e8ecf0; }
-.doctor-header-card h2 { font-size: 1.1rem; color: #0d47a1; margin-bottom: 0.3rem; }
-
-/* Layout calendario */
-.calendar-layout { display: grid; grid-template-columns: 320px 1fr; gap: 1.5rem; align-items: start; }
-.calendar-card { background: white; border-radius: 14px; padding: 1.25rem; border: 1px solid #e8ecf0; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
-.cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
-.cal-month-label { font-size: 0.95rem; font-weight: 700; color: #0d47a1; }
-.cal-nav-btn { background: #f0f4f8; border: none; border-radius: 7px; width: 30px; height: 30px; font-size: 1.1rem; cursor: pointer; color: #1a73e8; display: flex; align-items: center; justify-content: center; }
-.cal-nav-btn:hover { background: #e8f0fe; }
-.cal-weekdays { display: grid; grid-template-columns: repeat(7,1fr); margin-bottom: 0.35rem; }
-.cal-weekdays span { text-align: center; font-size: 0.68rem; font-weight: 700; color: #aaa; text-transform: uppercase; }
-.cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
-.cal-cell { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 7px; font-size: 0.85rem; color: #555; position: relative; transition: all 0.12s; }
-.cal-cell.empty  { pointer-events: none; }
-.cal-cell.past   { color: #ccc; pointer-events: none; }
-.cal-cell.sunday { color: #ffb3b3; pointer-events: none; }
-.cal-cell.available { cursor: pointer; font-weight: 600; color: #0d47a1; background: #f0f4ff; }
-.cal-cell.available:hover { background: #d2e3fc; transform: scale(1.08); }
-.cal-cell.selected { background: #1a73e8 !important; color: white !important; font-weight: 700; box-shadow: 0 4px 12px rgba(26,115,232,0.4); }
-.cal-dot { width: 5px; height: 5px; background: #1a73e8; border-radius: 50%; position: absolute; bottom: 2px; }
-.cal-cell.selected .cal-dot { background: white; }
-.cal-tag { font-size: 0.5rem; color: #e53935; font-weight: 700; position: absolute; bottom: 2px; }
-.cal-legend { display: flex; gap: 0.75rem; margin-top: 0.75rem; justify-content: center; flex-wrap: wrap; }
-.leg { display: flex; align-items: center; gap: 0.3rem; font-size: 0.72rem; color: #888; }
-.leg-dot { width: 9px; height: 9px; border-radius: 50%; }
-.leg-dot.avail  { background: #1a73e8; }
-.leg-dot.sel    { background: #1a73e8; box-shadow: 0 0 0 2px white, 0 0 0 3px #1a73e8; }
-.leg-dot.closed { background: #eee; border: 1px solid #ddd; }
-
-/* Panel horarios */
-.slots-panel { background: white; border-radius: 14px; padding: 1.5rem; border: 1px solid #e8ecf0; min-height: 240px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
-.slots-empty { display: flex; align-items: center; justify-content: center; height: 180px; color: #aaa; font-size: 0.9rem; text-align: center; }
-.slots-title { font-size: 1rem; color: #0d47a1; font-weight: 700; margin-bottom: 1rem; }
-.slots-list { display: flex; flex-direction: column; gap: 0.6rem; }
-.slot-item { display: flex; align-items: center; justify-content: space-between; padding: 0.8rem 1rem; border: 1.5px solid #e8ecf0; border-radius: 10px; transition: border-color 0.15s; }
-.slot-item:hover { border-color: #1a73e8; }
-.slot-time { font-size: 1.15rem; font-weight: 700; color: #0d47a1; }
-.btn-book { padding: 0.5rem 1.2rem; background: linear-gradient(135deg,#1a73e8,#0d47a1); color: white; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.18s; }
-.btn-book:hover:not(:disabled) { background: linear-gradient(135deg,#1557b0,#0a2d6e); box-shadow: 0 4px 12px rgba(26,115,232,0.3); }
-.btn-book:disabled { background: #b0bec5; cursor: not-allowed; }
-
-/* Modal */
-.modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.45); backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center; padding: 1rem; }
-.modal-box { background: white; border-radius: 16px; padding: 2rem; max-width: 380px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
-.modal-box h3 { font-size: 1.15rem; color: #0d47a1; margin-bottom: 0.5rem; }
-.modal-box p { font-size: 0.9rem; color: #555; }
-.modal-warn { color: #e65100; font-size: 0.82rem; margin-top: 0.35rem; }
-.modal-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; justify-content: center; }
-.btn-ghost { padding: 0.6rem 1.2rem; background: transparent; color: #555; border: 1.5px solid #ddd; border-radius: 8px; font-size: 0.9rem; cursor: pointer; }
-.btn-ghost:hover { background: #f5f5f5; }
-.btn-danger { padding: 0.6rem 1.4rem; background: #d32f2f; color: white; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; }
-.btn-danger:hover:not(:disabled) { background: #b71c1c; }
-.btn-danger:disabled { background: #ef9a9a; cursor: not-allowed; }
-.modal-enter-active, .modal-leave-active { transition: all 0.2s; }
-.modal-enter-from, .modal-leave-to { opacity: 0; }
-.modal-enter-from .modal-box, .modal-leave-to .modal-box { transform: scale(0.93); }
-
-/* Spinners */
-.spinner { width: 38px; height: 38px; border: 4px solid #e0e0e0; border-top-color: #1a73e8; border-radius: 50%; animation: spin 0.75s linear infinite; }
-.spinner-sm { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.75s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-.btn-outline { padding: 0.5rem 1rem; background: white; color: #1a73e8; border: 1.5px solid #1a73e8; border-radius: 7px; font-size: 0.88rem; font-weight: 600; cursor: pointer; }
-.btn-outline:hover { background: #e8f0fe; }
-
-@media (max-width: 860px) { .calendar-layout { grid-template-columns: 1fr; } }
-@media (max-width: 480px) { .page-header h1 { font-size: 1.5rem; } }
 </style>

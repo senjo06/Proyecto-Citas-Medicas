@@ -9,7 +9,14 @@ const Appointment = {
       SELECT id, doctor_name, specialty, appointment_date, appointment_time 
       FROM appointments 
       WHERE is_booked = false
-        AND appointment_date BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '14 days'
+        AND (
+          appointment_date > CURRENT_DATE
+          OR (
+            appointment_date = CURRENT_DATE
+            AND appointment_time > (NOW() AT TIME ZONE 'America/Bogota')::time
+          )
+        )
+        AND appointment_date <= CURRENT_DATE + INTERVAL '14 days'
       ORDER BY appointment_date ASC, appointment_time ASC;
     `;
     const { rows } = await pool.query(query);
@@ -23,7 +30,14 @@ const Appointment = {
       FROM appointments 
       WHERE is_booked = false
         AND doctor_name = $1
-        AND appointment_date BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '30 days'
+        AND (
+          appointment_date > CURRENT_DATE
+          OR (
+            appointment_date = CURRENT_DATE
+            AND appointment_time > (NOW() AT TIME ZONE 'America/Bogota')::time
+          )
+        )
+        AND appointment_date <= CURRENT_DATE + INTERVAL '30 days'
       ORDER BY appointment_date ASC, appointment_time ASC;
     `;
     const { rows } = await pool.query(query, [doctorName]);
