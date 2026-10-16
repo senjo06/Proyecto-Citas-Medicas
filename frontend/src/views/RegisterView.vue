@@ -1,118 +1,50 @@
 <template>
-  <div class="register-page">
-    <div class="register-card">
-
-      <div class="register-header">
-        <h1 class="register-title">Crear cuenta</h1>
-        <p class="register-subtitle">Completá tus datos para registrarte</p>
+  <div class="page">
+    <div class="box">
+      <div class="head">
+        <h1>Crear cuenta</h1>
+        <p>Completá tus datos para registrarte en el sistema</p>
       </div>
 
-      <!-- Alerta de error -->
-      <transition name="slide-alert">
-        <div v-if="errorMsg" class="alert-error" role="alert">
-          {{ errorMsg }}
-        </div>
+      <transition name="alert-in">
+        <div v-if="errorMsg"  class="alert alert-error">{{ errorMsg }}</div>
       </transition>
-
-      <!-- Alerta de éxito -->
-      <transition name="slide-alert">
-        <div v-if="successMsg" class="alert-success" role="alert">
-          {{ successMsg }}
-        </div>
+      <transition name="alert-in">
+        <div v-if="successMsg" class="alert alert-success">{{ successMsg }}</div>
       </transition>
 
       <form @submit.prevent="handleRegister" novalidate>
-
-        <div class="form-group">
+        <div class="field">
           <label for="name">Nombre completo</label>
-          <input
-            id="name"
-            v-model="form.name"
-            type="text"
-            placeholder="Ej: Juan Pérez"
-            autocomplete="name"
-            required
-            :disabled="loading"
-          />
+          <input id="name" v-model="form.name" type="text" placeholder="Ej: Juan Pérez" required :disabled="loading" />
         </div>
-
-        <div class="form-group">
+        <div class="field">
           <label for="email">Correo electrónico</label>
-          <input
-            id="email"
-            v-model="form.email"
-            type="email"
-            placeholder="Ej: juan@correo.com"
-            autocomplete="email"
-            required
-            :disabled="loading"
-          />
+          <input id="email" v-model="form.email" type="email" placeholder="Ej: juan@correo.com" required :disabled="loading" />
         </div>
-
-        <div class="form-group">
-          <label for="phone">Teléfono</label>
-          <input
-            id="phone"
-            v-model="form.phone"
-            type="tel"
-            placeholder="Ej: +57 300 123 4567"
-            autocomplete="tel"
-            :disabled="loading"
-          />
+        <div class="field">
+          <label for="phone">Teléfono <span class="opt">(opcional)</span></label>
+          <input id="phone" v-model="form.phone" type="tel" placeholder="Ej: +57 300 123 4567" :disabled="loading" />
         </div>
-
-        <div class="form-group">
+        <div class="field">
           <label for="password">Contraseña</label>
-          <div class="input-wrap">
-            <input
-              id="password"
-              v-model="form.password"
-              :type="showPw ? 'text' : 'password'"
-              placeholder="Mínimo 6 caracteres"
-              autocomplete="new-password"
-              required
-              minlength="6"
-              :disabled="loading"
-            />
-            <button type="button" class="toggle-pw" @click="showPw = !showPw">
-              {{ showPw ? 'Ocultar' : 'Mostrar' }}
-            </button>
+          <div class="input-row">
+            <input id="password" v-model="form.password" :type="showPw ? 'text' : 'password'" placeholder="Mínimo 6 caracteres" required minlength="6" :disabled="loading" />
+            <button type="button" class="btn-toggle" @click="showPw = !showPw">{{ showPw ? 'Ocultar' : 'Mostrar' }}</button>
           </div>
         </div>
-
-        <div class="form-group">
+        <div class="field">
           <label for="confirm">Confirmar contraseña</label>
-          <input
-            id="confirm"
-            v-model="form.confirm"
-            :type="showPw ? 'text' : 'password'"
-            placeholder="Repetí la contraseña"
-            required
-            :disabled="loading"
-          />
-          <span v-if="form.confirm && form.password !== form.confirm" class="field-error">
-            Las contraseñas no coinciden.
-          </span>
+          <input id="confirm" v-model="form.confirm" :type="showPw ? 'text' : 'password'" placeholder="Repetí la contraseña" required :disabled="loading" />
+          <span v-if="form.confirm && form.password !== form.confirm" class="field-error">Las contraseñas no coinciden.</span>
         </div>
-
-        <button
-          type="submit"
-          class="btn-register"
-          :disabled="loading || !canSubmit"
-        >
+        <button type="submit" class="btn-submit" :disabled="loading || !canSubmit">
           <span v-if="!loading">Crear cuenta</span>
-          <span v-else class="btn-loading">
-            <span class="spinner-sm"></span> Registrando...
-          </span>
+          <span v-else class="loading-row"><span class="spin"></span> Registrando...</span>
         </button>
-
       </form>
 
-      <p class="login-link">
-        ¿Ya tenés cuenta?
-        <router-link to="/">Iniciá sesión</router-link>
-      </p>
-
+      <p class="link-row">¿Ya tenés cuenta? <router-link to="/">Iniciá sesión</router-link></p>
     </div>
   </div>
 </template>
@@ -121,157 +53,52 @@
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { UserService } from '../services/user.service';
-
 const router = useRouter();
-
 const loading = ref(false);
-const showPw = ref(false);
-const errorMsg = ref<string | null>(null);
-const successMsg = ref<string | null>(null);
-
-const form = ref({
-  name: '',
-  email: '',
-  phone: '',
-  password: '',
-  confirm: ''
-});
-
-const canSubmit = computed(() =>
-  form.value.name &&
-  form.value.email &&
-  form.value.password.length >= 6 &&
-  form.value.password === form.value.confirm
-);
-
+const showPw  = ref(false);
+const errorMsg   = ref<string|null>(null);
+const successMsg = ref<string|null>(null);
+const form = ref({ name:'', email:'', phone:'', password:'', confirm:'' });
+const canSubmit = computed(() => form.value.name && form.value.email && form.value.password.length >= 6 && form.value.password === form.value.confirm);
 const handleRegister = async () => {
-  errorMsg.value = null;
-  loading.value = true;
+  errorMsg.value = null; loading.value = true;
   try {
-    await UserService.create({
-      name: form.value.name,
-      email: form.value.email,
-      password: form.value.password,
-      phone: form.value.phone || undefined
-    });
-    successMsg.value = '¡Cuenta creada exitosamente! Redirigiendo al login...';
+    await UserService.create({ name: form.value.name, email: form.value.email, password: form.value.password, phone: form.value.phone || undefined });
+    successMsg.value = 'Cuenta creada. Redirigiendo...';
     setTimeout(() => router.push('/'), 2000);
-  } catch (err: any) {
-    errorMsg.value = err.response?.data?.message || 'Error al crear la cuenta.';
-  } finally {
-    loading.value = false;
-  }
+  } catch (e: any) { errorMsg.value = e.response?.data?.message || 'Error al crear la cuenta.'; }
+  finally { loading.value = false; }
 };
 </script>
 
 <style scoped>
-.register-page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #0d47a1 0%, #1a73e8 60%, #42a5f5 100%);
-  padding: 1rem;
-}
-
-.register-card {
-  background: white;
-  border-radius: 24px;
-  padding: 2.5rem 2rem;
-  width: 100%;
-  max-width: 420px;
-  box-shadow: 0 24px 64px rgba(0,0,0,0.3);
-}
-
-.register-header { text-align: center; margin-bottom: 1.75rem; }
-.register-title { font-size: 1.5rem; color: #0d47a1; margin-bottom: 0.3rem; }
-.register-subtitle { font-size: 0.88rem; color: #888; }
-
-/* Alertas */
-.alert-error {
-  background: #f8d7da; color: #721c24;
-  border: 1px solid #f1b0b7;
-  padding: 0.7rem 0.9rem; border-radius: 8px;
-  font-size: 0.88rem; font-weight: 500;
-  margin-bottom: 1rem;
-}
-.alert-success {
-  background: #d4edda; color: #155724;
-  border: 1px solid #b7dfbc;
-  padding: 0.7rem 0.9rem; border-radius: 8px;
-  font-size: 0.88rem; font-weight: 500;
-  margin-bottom: 1rem;
-}
-.slide-alert-enter-active, .slide-alert-leave-active { transition: all 0.22s ease; }
-.slide-alert-enter-from, .slide-alert-leave-to { opacity: 0; transform: translateY(-6px); }
-
-/* Formulario */
-.form-group { margin-bottom: 1rem; }
-.form-group label {
-  display: block; font-size: 0.84rem;
-  font-weight: 600; color: #444; margin-bottom: 0.35rem;
-}
-.form-group input {
-  width: 100%;
-  padding: 0.65rem 0.85rem;
-  border: 1.5px solid #ced4da; border-radius: 10px;
-  font-size: 0.95rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  box-sizing: border-box;
-}
-.form-group input:focus {
-  border-color: #1a73e8;
-  box-shadow: 0 0 0 3px rgba(26,115,232,0.15);
-  outline: none;
-}
-.form-group input:disabled { background: #f5f5f5; }
-
-.input-wrap { position: relative; }
-.input-wrap input { padding-right: 5.5rem; }
-.toggle-pw {
-  position: absolute; right: 0.75rem; top: 50%;
-  transform: translateY(-50%);
-  background: transparent; border: none;
-  font-size: 0.78rem; color: #1a73e8;
-  font-weight: 600; cursor: pointer;
-}
-
-.field-error { font-size: 0.78rem; color: #e53935; margin-top: 0.3rem; display: block; font-weight: 600; }
-
-/* Botón */
-.btn-register {
-  width: 100%; margin-top: 0.5rem;
-  padding: 0.8rem;
-  background: linear-gradient(135deg, #1a73e8, #0d47a1);
-  color: white; border: none; border-radius: 10px;
-  font-size: 1rem; font-weight: 700;
-  cursor: pointer; transition: all 0.2s;
-  display: flex; align-items: center; justify-content: center;
-}
-.btn-register:hover:not(:disabled) {
-  background: linear-gradient(135deg, #1557b0, #0a2d6e);
-  box-shadow: 0 6px 18px rgba(26,115,232,0.35);
-  transform: translateY(-1px);
-}
-.btn-register:disabled { background: #b0bec5; cursor: not-allowed; transform: none; }
-.btn-loading { display: flex; align-items: center; gap: 0.5rem; }
-
-.spinner-sm {
-  display: inline-block; width: 14px; height: 14px;
-  border: 2px solid rgba(255,255,255,0.4);
-  border-top-color: white; border-radius: 50%;
-  animation: spin 0.75s linear infinite;
-}
+.page { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #f3f4f6; padding: 1rem; }
+.box { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 2.25rem 2rem; width: 100%; max-width: 400px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+.head { text-align: center; margin-bottom: 1.5rem; }
+.head h1 { font-size: 1.2rem; color: #111827; margin-bottom: 0.25rem; }
+.head p  { font-size: 0.83rem; color: #6b7280; }
+.alert { padding: 0.6rem 0.85rem; border-radius: 6px; font-size: 0.85rem; margin-bottom: 1rem; }
+.alert-error   { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+.alert-success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+.alert-in-enter-active, .alert-in-leave-active { transition: all 0.2s; }
+.alert-in-enter-from, .alert-in-leave-to { opacity: 0; transform: translateY(-4px); }
+.field { margin-bottom: 0.9rem; }
+.field label { display: block; font-size: 0.82rem; font-weight: 500; color: #374151; margin-bottom: 0.3rem; }
+.opt { font-weight: 400; color: #9ca3af; }
+.field input { width: 100%; padding: 0.58rem 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.9rem; color: #111827; background: #fff; transition: border-color 0.15s, box-shadow 0.15s; box-sizing: border-box; }
+.field input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+.field input:disabled { background: #f9fafb; }
+.input-row { position: relative; }
+.input-row input { padding-right: 5rem; }
+.btn-toggle { position: absolute; right: 0.65rem; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 0.75rem; color: #6b7280; font-weight: 500; cursor: pointer; }
+.btn-toggle:hover { color: #2563eb; }
+.field-error { font-size: 0.78rem; color: #dc2626; margin-top: 0.25rem; display: block; }
+.btn-submit { width: 100%; margin-top: 0.5rem; padding: 0.62rem; background: #2563eb; color: white; border: none; border-radius: 7px; font-size: 0.92rem; font-weight: 600; cursor: pointer; transition: background 0.15s; display: flex; align-items: center; justify-content: center; }
+.btn-submit:hover:not(:disabled) { background: #1d4ed8; }
+.btn-submit:disabled { background: #93c5fd; cursor: not-allowed; }
+.loading-row { display: flex; align-items: center; gap: 0.5rem; }
+.spin { display: inline-block; width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-
-.login-link {
-  text-align: center; margin-top: 1.25rem;
-  font-size: 0.88rem; color: #888;
-}
-.login-link a { color: #1a73e8; font-weight: 600; text-decoration: none; }
-.login-link a:hover { text-decoration: underline; }
-
-@media (max-width: 480px) {
-  .register-card { padding: 2rem 1.25rem; }
-}
+.link-row { text-align: center; margin-top: 1.1rem; font-size: 0.85rem; color: #6b7280; }
+.link-row a { color: #2563eb; font-weight: 500; }
 </style>

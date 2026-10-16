@@ -411,10 +411,129 @@ const initials = (name: string) => {
 </script>
 
 <style scoped>
+/* ── Reset de estilos heredados del diseño anterior ── */
 .home-view { width: 100%; }
-.page-header { margin-bottom: 1.75rem; text-align: center; }
-.page-header h1 { font-size: 1.9rem; color: #0d47a1; margin-bottom: 0.4rem; }
-.subtitle { color: #666; font-size: 0.92rem; }
+.page-header { margin-bottom: 1.5rem; }
+.page-header h1 { font-size: 1.35rem; font-weight: 600; color: #111827; margin-bottom: 0.2rem; }
+.subtitle { font-size: 0.85rem; color: #6b7280; }
+
+/* Alertas */
+.alert { display: flex; align-items: center; justify-content: space-between; padding: 0.65rem 0.9rem; border-radius: 6px; margin-bottom: 1rem; font-size: 0.88rem; font-weight: 500; }
+.alert-success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+.alert-error   { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+.alert-close { background: none; border: none; font-size: 1rem; cursor: pointer; opacity: 0.5; color: inherit; }
+.alert-close:hover { opacity: 1; }
+.slide-alert-enter-active, .slide-alert-leave-active { transition: all 0.2s; }
+.slide-alert-enter-from, .slide-alert-leave-to { opacity: 0; transform: translateY(-6px); }
+
+/* Mis turnos */
+.my-appointments { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 1rem 1.1rem; margin-bottom: 1.25rem; }
+.my-title { font-size: 0.83rem; font-weight: 600; color: #1d4ed8; margin-bottom: 0.6rem; text-transform: uppercase; letter-spacing: 0.4px; }
+.my-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.my-item { background: white; border: 1px solid #e5e7eb; border-radius: 6px; padding: 0.7rem 0.9rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.my-item-info { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+.my-doctor { font-weight: 600; color: #111827; font-size: 0.88rem; }
+.my-date { font-size: 0.8rem; color: #6b7280; }
+.my-item-actions { display: flex; gap: 0.4rem; }
+.btn-change { padding: 0.3rem 0.7rem; background: #fffbeb; color: #92400e; border: 1px solid #fcd34d; border-radius: 5px; font-size: 0.8rem; font-weight: 500; cursor: pointer; }
+.btn-change:hover { background: #fef3c7; }
+.btn-cancel-my { padding: 0.3rem 0.7rem; background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; border-radius: 5px; font-size: 0.8rem; font-weight: 500; cursor: pointer; }
+.btn-cancel-my:hover:not(:disabled) { background: #fee2e2; }
+.btn-cancel-my:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Estado */
+.state-box { display: flex; flex-direction: column; align-items: center; gap: 0.65rem; padding: 3rem; background: white; border: 1px solid #e5e7eb; border-radius: 8px; color: #9ca3af; font-size: 0.9rem; }
+
+/* Lista doctores */
+.doctors-grid { display: flex; flex-direction: column; gap: 0.5rem; }
+.doctor-card { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem 1.1rem; display: flex; align-items: center; gap: 0.9rem; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
+.doctor-card:hover { border-color: #93c5fd; box-shadow: 0 0 0 3px rgba(37,99,235,0.06); }
+.doctor-avatar { width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; background: #eff6ff; color: #2563eb; font-size: 0.95rem; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 1px solid #bfdbfe; }
+.doctor-avatar.lg { width: 52px; height: 52px; font-size: 1.1rem; }
+.doctor-info { flex: 1; }
+.doctor-info h3 { font-size: 0.95rem; font-weight: 600; color: #111827; margin-bottom: 0.25rem; }
+.doctor-slots-count { font-size: 0.78rem; color: #9ca3af; margin-top: 0.2rem; }
+.doctor-arrow { font-size: 1.2rem; color: #d1d5db; }
+.doctor-card:hover .doctor-arrow { color: #2563eb; }
+
+.specialty-badge { display: inline-block; background: #f1f5f9; color: #475569; font-size: 0.7rem; font-weight: 600; padding: 0.1rem 0.5rem; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.3px; border: 1px solid #e2e8f0; }
+
+/* Breadcrumb */
+.breadcrumb { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 1rem; font-size: 0.83rem; color: #9ca3af; }
+.btn-back { background: none; border: none; color: #2563eb; font-size: 0.83rem; font-weight: 500; cursor: pointer; padding: 0; }
+.btn-back:hover { text-decoration: underline; }
+
+/* Doctor header */
+.doctor-header-card { display: flex; align-items: center; gap: 0.9rem; background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem 1.1rem; margin-bottom: 1.1rem; }
+.doctor-header-card h2 { font-size: 1rem; color: #111827; margin-bottom: 0.25rem; }
+
+/* Layout calendario */
+.calendar-layout { display: grid; grid-template-columns: 300px 1fr; gap: 1.25rem; align-items: start; }
+.calendar-card { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.1rem; }
+.cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.65rem; }
+.cal-month-label { font-size: 0.9rem; font-weight: 600; color: #111827; }
+.cal-nav-btn { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 5px; width: 28px; height: 28px; font-size: 1rem; cursor: pointer; color: #374151; display: flex; align-items: center; justify-content: center; }
+.cal-nav-btn:hover { background: #f3f4f6; border-color: #d1d5db; }
+.cal-weekdays { display: grid; grid-template-columns: repeat(7,1fr); margin-bottom: 0.3rem; }
+.cal-weekdays span { text-align: center; font-size: 0.66rem; font-weight: 600; color: #9ca3af; text-transform: uppercase; padding: 0.2rem 0; }
+.cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
+.cal-cell { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 5px; font-size: 0.83rem; color: #374151; position: relative; transition: all 0.1s; }
+.cal-cell.empty  { pointer-events: none; }
+.cal-cell.past   { color: #d1d5db; pointer-events: none; }
+.cal-cell.sunday { color: #fca5a5; pointer-events: none; }
+.cal-cell.available { cursor: pointer; font-weight: 600; color: #1d4ed8; background: #eff6ff; border: 1px solid #bfdbfe; }
+.cal-cell.available:hover { background: #dbeafe; }
+.cal-cell.selected { background: #2563eb !important; color: white !important; font-weight: 700; border-color: #2563eb !important; }
+.cal-dot { width: 4px; height: 4px; background: #2563eb; border-radius: 50%; position: absolute; bottom: 2px; }
+.cal-cell.selected .cal-dot { background: white; }
+.cal-tag { font-size: 0.48rem; color: #ef4444; font-weight: 700; position: absolute; bottom: 2px; letter-spacing: 0; }
+.cal-legend { display: flex; gap: 0.75rem; margin-top: 0.75rem; justify-content: center; flex-wrap: wrap; }
+.leg { display: flex; align-items: center; gap: 0.3rem; font-size: 0.7rem; color: #9ca3af; }
+.leg-dot { width: 8px; height: 8px; border-radius: 50%; }
+.leg-dot.avail  { background: #2563eb; }
+.leg-dot.sel    { background: #2563eb; box-shadow: 0 0 0 2px white, 0 0 0 3px #2563eb; }
+.leg-dot.closed { background: #fee2e2; border: 1px solid #fca5a5; }
+
+/* Panel horarios */
+.slots-panel { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.25rem; min-height: 220px; }
+.slots-empty { display: flex; align-items: center; justify-content: center; height: 160px; color: #9ca3af; font-size: 0.88rem; text-align: center; }
+.slots-title { font-size: 0.88rem; font-weight: 600; color: #374151; margin-bottom: 0.9rem; }
+.slots-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.slot-item { display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 0.9rem; border: 1px solid #e5e7eb; border-radius: 6px; transition: border-color 0.15s; }
+.slot-item:hover { border-color: #93c5fd; }
+.slot-time { font-size: 1.05rem; font-weight: 700; color: #111827; font-variant-numeric: tabular-nums; }
+.btn-book { padding: 0.4rem 1rem; background: #2563eb; color: white; border: none; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+.btn-book:hover:not(:disabled) { background: #1d4ed8; }
+.btn-book:disabled { background: #93c5fd; cursor: not-allowed; }
+
+/* Modal */
+.modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.modal-box { background: white; border-radius: 10px; padding: 1.75rem; max-width: 360px; width: 100%; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.15); }
+.modal-box h3 { font-size: 1.05rem; color: #111827; margin-bottom: 0.5rem; }
+.modal-box p { font-size: 0.88rem; color: #6b7280; }
+.modal-warn { color: #b45309; font-size: 0.82rem; margin-top: 0.3rem; }
+.modal-actions { display: flex; gap: 0.65rem; margin-top: 1.25rem; justify-content: center; }
+.btn-ghost { padding: 0.55rem 1.1rem; background: transparent; color: #374151; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.88rem; cursor: pointer; }
+.btn-ghost:hover { background: #f9fafb; }
+.btn-danger { padding: 0.55rem 1.25rem; background: #dc2626; color: white; border: none; border-radius: 6px; font-size: 0.88rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; }
+.btn-danger:hover:not(:disabled) { background: #b91c1c; }
+.btn-danger:disabled { background: #fca5a5; cursor: not-allowed; }
+.modal-enter-active, .modal-leave-active { transition: all 0.18s; }
+.modal-enter-from, .modal-leave-to { opacity: 0; }
+.modal-enter-from .modal-box, .modal-leave-to .modal-box { transform: scale(0.95); }
+
+/* Botón outline */
+.btn-outline { padding: 0.45rem 0.9rem; background: white; color: #2563eb; border: 1px solid #93c5fd; border-radius: 6px; font-size: 0.85rem; font-weight: 500; cursor: pointer; }
+.btn-outline:hover { background: #eff6ff; }
+
+/* Spinners */
+.spinner { width: 32px; height: 32px; border: 3px solid #e5e7eb; border-top-color: #2563eb; border-radius: 50%; animation: spin 0.7s linear infinite; }
+.spinner-sm { display: inline-block; width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 860px) { .calendar-layout { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .page-header h1 { font-size: 1.15rem; } }
+</style>
 
 .alert { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.93rem; font-weight: 500; }
 .alert-success { background: #d4edda; color: #155724; border: 1px solid #b7dfbc; }

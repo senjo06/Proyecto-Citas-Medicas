@@ -184,7 +184,7 @@ const handleSave = async () => {
 <style scoped>
 .profile-view { width: 100%; }
 .page-header { margin-bottom: 1.75rem; text-align: center; }
-.page-header h1 { font-size: 1.9rem; color: #0d47a1; margin-bottom: 0.4rem; }
+.page-header h1 { font-size: 1.9rem; color: #1e293b; margin-bottom: 0.4rem; }
 .subtitle { color: #666; font-size: 0.92rem; }
 
 .alert { display: flex; align-items: center; gap: 0.6rem; padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.93rem; font-weight: 500; }
@@ -196,22 +196,22 @@ const handleSave = async () => {
 .slide-alert-enter-from, .slide-alert-leave-to { opacity: 0; transform: translateY(-8px); }
 
 .profile-grid { display: grid; grid-template-columns: 240px 1fr; gap: 1.5rem; align-items: start; }
-.card { background: white; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); padding: 1.5rem; border: 1px solid #e8ecf0; }
+.card { background: white; border-radius: 8px; box-shadow: none; padding: 1.5rem; border: 1px solid #e5e7eb; }
 
 /* Avatar */
 .profile-card { text-align: center; }
-.avatar-circle { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; font-size: 1.6rem; font-weight: 700; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; }
-.profile-name { font-size: 1.05rem; color: #1a1a2e; margin-bottom: 0.25rem; }
+.avatar-circle { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #2563eb, #1e293b); color: white; font-size: 1.6rem; font-weight: 700; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; }
+.profile-name { font-size: 1.05rem; color: #111827; margin-bottom: 0.25rem; }
 .profile-email { font-size: 0.83rem; color: #888; margin-bottom: 1rem; word-break: break-all; }
 .badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
-.badge.user { background: #e8f0fe; color: #1557b0; }
+.badge.user { background: #eff6ff; color: #1d4ed8; }
 
 /* Formulario */
-.panel-title { font-size: 1.05rem; color: #0d47a1; margin-bottom: 1.25rem; }
+.panel-title { font-size: 1.05rem; color: #1e293b; margin-bottom: 1.25rem; }
 .form-group { margin-bottom: 1rem; }
 .form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: #444; margin-bottom: 0.35rem; }
 .form-group input { width: 100%; padding: 0.6rem 0.85rem; border: 1.5px solid #ced4da; border-radius: 7px; font-size: 0.95rem; transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box; }
-.form-group input:focus { border-color: #1a73e8; box-shadow: 0 0 0 3px rgba(26,115,232,0.15); outline: none; }
+.form-group input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(26,115,232,0.15); outline: none; }
 .form-group input:disabled { background: #f5f5f5; }
 .input-wrap { position: relative; }
 .input-wrap input { padding-right: 2.5rem; }
@@ -223,8 +223,8 @@ const handleSave = async () => {
 .section-divider span { font-size: 0.8rem; color: #999; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
 .section-divider::before, .section-divider::after { content: ''; flex: 1; height: 1px; background: #e9ecef; }
 
-.btn-primary { width: 100%; margin-top: 0.5rem; padding: 0.7rem; background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.4rem; }
-.btn-primary:hover:not(:disabled) { background: linear-gradient(135deg, #1557b0, #0a2d6e); box-shadow: 0 4px 14px rgba(26,115,232,0.3); }
+.btn-primary { width: 100%; margin-top: 0.5rem; padding: 0.7rem; background: linear-gradient(135deg, #2563eb, #1e293b); color: white; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.4rem; }
+.btn-primary:hover:not(:disabled) { background: linear-gradient(135deg, #1d4ed8, #0a2d6e); box-shadow: 0 4px 14px rgba(26,115,232,0.3); }
 .btn-primary:disabled { background: #b0bec5; cursor: not-allowed; }
 .btn-loading { display: flex; align-items: center; gap: 0.4rem; }
 .spinner-sm { display: inline-block; width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.75s linear infinite; }
@@ -234,4 +234,5 @@ const handleSave = async () => {
   .profile-grid { grid-template-columns: 1fr; }
 }
 </style>
+
 

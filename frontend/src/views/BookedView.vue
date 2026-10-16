@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="booked-view">
 
     <!-- Encabezado -->
@@ -322,7 +322,7 @@ const initials = (name: string): string => {
 
 /* Encabezado */
 .page-header { margin-bottom: 1.75rem; text-align: center; }
-.page-header h1 { font-size: 1.9rem; color: #0d47a1; margin-bottom: 0.4rem; }
+.page-header h1 { font-size: 1.9rem; color: #1e293b; margin-bottom: 0.4rem; }
 .subtitle { color: #666; font-size: 0.92rem; }
 
 /* Alertas */
@@ -345,7 +345,7 @@ const initials = (name: string): string => {
 .state-box {
   display: flex; flex-direction: column; align-items: center;
   gap: 0.75rem; padding: 3.5rem 1rem;
-  background: white; border-radius: 14px;
+  background: white; border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.06); color: #777;
 }
 .state-emoji { font-size: 2.5rem; }
@@ -357,19 +357,19 @@ const initials = (name: string): string => {
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
 
 /* Card / tabla */
-.card { background: white; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); padding: 1.25rem; border: 1px solid #e8ecf0; }
+.card { background: white; border-radius: 8px; box-shadow: none; padding: 1.25rem; border: 1px solid #e5e7eb; }
 .table-wrapper { overflow-x: auto; border-radius: 8px; }
 .booked-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; min-width: 900px; }
-.booked-table th { background: #f8f9fa; color: #555; font-weight: 600; text-align: left; padding: 0.7rem 0.85rem; border-bottom: 2px solid #e9ecef; white-space: nowrap; }
+.booked-table th { background: #f9fafb; color: #555; font-weight: 600; text-align: left; padding: 0.7rem 0.85rem; border-bottom: 2px solid #e9ecef; white-space: nowrap; }
 .booked-table td { padding: 0.65rem 0.85rem; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
 .booked-table tr:last-child td { border-bottom: none; }
 .booked-table tr:hover td { background: #fafbff; }
 
 .td-id { color: #bbb; font-size: 0.8rem; width: 32px; }
 .td-doctor, .td-patient { display: flex; align-items: center; gap: 0.55rem; font-weight: 500; white-space: nowrap; }
-.doctor-avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.patient-avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #34a853, #1b5e20); color: white; font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.specialty-badge { display: inline-block; background: #e8f0fe; color: #1557b0; font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap; }
+.doctor-avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #2563eb, #1e293b); color: white; font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.patient-avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #16a34a, #15803d); color: white; font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.specialty-badge { display: inline-block; background: #eff6ff; color: #1d4ed8; font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap; }
 .td-date, .td-time { color: #555; white-space: nowrap; }
 .td-email { color: #888; font-size: 0.83rem; }
 .td-booked { color: #aaa; font-size: 0.82rem; white-space: nowrap; }
@@ -378,7 +378,7 @@ const initials = (name: string): string => {
 /* Botón cancelar */
 .btn-cancel {
   padding: 0.35rem 0.75rem;
-  background: #ffeef0; color: #c62828;
+  background: #ffeef0; color: #b91c1c;
   border: 1px solid #ef9a9a; border-radius: 6px;
   font-size: 0.82rem; font-weight: 600;
   cursor: pointer; transition: all 0.18s; white-space: nowrap;
@@ -387,14 +387,14 @@ const initials = (name: string): string => {
 .btn-cancel:disabled { opacity: 0.4; cursor: not-allowed; }
 
 /* Botones generales */
-.btn-outline { padding: 0.5rem 1rem; background: white; color: #1a73e8; border: 1.5px solid #1a73e8; border-radius: 7px; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: all 0.18s; }
-.btn-outline:hover:not(:disabled) { background: #e8f0fe; }
+.btn-outline { padding: 0.5rem 1rem; background: white; color: #2563eb; border: 1.5px solid #2563eb; border-radius: 7px; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: all 0.18s; }
+.btn-outline:hover:not(:disabled) { background: #eff6ff; }
 .btn-outline:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-sm { padding: 0.38rem 0.85rem; font-size: 0.83rem; }
 .btn-ghost { padding: 0.65rem 1.2rem; background: transparent; color: #555; border: 1.5px solid #ddd; border-radius: 8px; font-size: 0.93rem; cursor: pointer; transition: all 0.2s; }
 .btn-ghost:hover { background: #f5f5f5; }
-.btn-danger { padding: 0.65rem 1.4rem; background: #d32f2f; color: white; border: none; border-radius: 8px; font-size: 0.93rem; font-weight: 600; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; gap: 0.4rem; }
-.btn-danger:hover:not(:disabled) { background: #b71c1c; }
+.btn-danger { padding: 0.65rem 1.4rem; background: #dc2626; color: white; border: none; border-radius: 8px; font-size: 0.93rem; font-weight: 600; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; gap: 0.4rem; }
+.btn-danger:hover:not(:disabled) { background: #b91c1c; }
 .btn-danger:disabled { background: #ef9a9a; cursor: not-allowed; }
 .btn-loading { display: flex; align-items: center; gap: 0.4rem; }
 
@@ -402,11 +402,11 @@ const initials = (name: string): string => {
 .modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.45); backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center; padding: 1rem; }
 .modal-box { background: white; border-radius: 16px; padding: 2rem; max-width: 400px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
 .modal-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
-.modal-box h3 { font-size: 1.2rem; margin-bottom: 0.5rem; color: #1a1a2e; }
+.modal-box h3 { font-size: 1.2rem; margin-bottom: 0.5rem; color: #111827; }
 .modal-box p { font-size: 0.93rem; color: #555; }
-.modal-detail { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; margin: 0.75rem 0; padding: 0.75rem; background: #f8f9fa; border-radius: 8px; }
-.modal-detail strong { font-size: 1rem; color: #1a1a2e; }
-.modal-specialty { font-size: 0.78rem; background: #e8f0fe; color: #1557b0; padding: 0.15rem 0.6rem; border-radius: 20px; font-weight: 700; text-transform: uppercase; }
+.modal-detail { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; margin: 0.75rem 0; padding: 0.75rem; background: #f9fafb; border-radius: 8px; }
+.modal-detail strong { font-size: 1rem; color: #111827; }
+.modal-specialty { font-size: 0.78rem; background: #eff6ff; color: #1d4ed8; padding: 0.15rem 0.6rem; border-radius: 20px; font-weight: 700; text-transform: uppercase; }
 .modal-sub { font-size: 0.88rem; color: #666; margin-bottom: 0.5rem; }
 .modal-warning { color: #e65100; font-size: 0.82rem; margin-top: 0.35rem; }
 .modal-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; justify-content: center; }
@@ -415,7 +415,7 @@ const initials = (name: string): string => {
 .modal-enter-from .modal-box, .modal-leave-to .modal-box { transform: scale(0.92); }
 
 /* Spinners */
-.spinner { width: 38px; height: 38px; border: 4px solid #e0e0e0; border-top-color: #1a73e8; border-radius: 50%; animation: spin 0.75s linear infinite; }
+.spinner { width: 38px; height: 38px; border: 4px solid #e0e0e0; border-top-color: #2563eb; border-radius: 50%; animation: spin 0.75s linear infinite; }
 .spinner-sm { display: inline-block; width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.75s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -423,3 +423,4 @@ const initials = (name: string): string => {
   .page-header h1 { font-size: 1.5rem; }
 }
 </style>
+

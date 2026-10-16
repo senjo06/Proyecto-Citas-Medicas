@@ -288,7 +288,7 @@ const initials = (name: string): string => {
 
 /* ── Encabezado ─────────────────────── */
 .page-header { margin-bottom: 1.75rem; text-align: center; }
-.page-header h1 { font-size: 1.9rem; color: #0d47a1; margin-bottom: 0.4rem; }
+.page-header h1 { font-size: 1.9rem; color: #1e293b; margin-bottom: 0.4rem; }
 .subtitle { color: #666; font-size: 0.92rem; }
 
 /* ── Alertas ────────────────────────── */
@@ -318,14 +318,14 @@ const initials = (name: string): string => {
 /* ── Cards ──────────────────────────── */
 .card {
   background: white;
-  border-radius: 14px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  border-radius: 8px;
+  box-shadow: none;
   padding: 1.5rem;
-  border: 1px solid #e8ecf0;
+  border: 1px solid #e5e7eb;
 }
 .panel-title {
   font-size: 1.05rem;
-  color: #0d47a1;
+  color: #1e293b;
   margin-bottom: 1.25rem;
 }
 
@@ -342,7 +342,7 @@ const initials = (name: string): string => {
   box-sizing: border-box;
 }
 .form-group input:focus {
-  border-color: #1a73e8;
+  border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(26,115,232,0.15);
 }
 .input-wrapper { position: relative; }
@@ -361,12 +361,12 @@ const initials = (name: string): string => {
 /* ── Botones ────────────────────────── */
 .btn-primary {
   flex: 1; padding: 0.65rem 1rem;
-  background: linear-gradient(135deg, #1a73e8, #1557b0);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
   color: white; border: none; border-radius: 8px;
   font-size: 0.93rem; font-weight: 600; cursor: pointer;
   transition: all 0.2s; display: flex; align-items: center; justify-content: center;
 }
-.btn-primary:hover:not(:disabled) { background: linear-gradient(135deg, #1557b0, #0d47a1); box-shadow: 0 4px 12px rgba(26,115,232,0.3); }
+.btn-primary:hover:not(:disabled) { background: linear-gradient(135deg, #1d4ed8, #1e293b); box-shadow: 0 4px 12px rgba(26,115,232,0.3); }
 .btn-primary:disabled { background: #b0bec5; cursor: not-allowed; }
 
 .btn-ghost {
@@ -378,10 +378,10 @@ const initials = (name: string): string => {
 
 .btn-outline {
   padding: 0.5rem 1rem; background: white;
-  color: #1a73e8; border: 1.5px solid #1a73e8;
+  color: #2563eb; border: 1.5px solid #2563eb;
   border-radius: 7px; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: all 0.18s;
 }
-.btn-outline:hover:not(:disabled) { background: #e8f0fe; }
+.btn-outline:hover:not(:disabled) { background: #eff6ff; }
 .btn-outline:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-sm { padding: 0.38rem 0.85rem; font-size: 0.83rem; }
 
@@ -399,7 +399,7 @@ const initials = (name: string): string => {
   width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 520px;
 }
 .users-table th {
-  background: #f8f9fa; color: #555; font-weight: 600;
+  background: #f9fafb; color: #555; font-weight: 600;
   text-align: left; padding: 0.7rem 0.9rem;
   border-bottom: 2px solid #e9ecef; white-space: nowrap;
 }
@@ -418,7 +418,7 @@ const initials = (name: string): string => {
 
 .user-avatar {
   width: 30px; height: 30px; border-radius: 50%;
-  background: linear-gradient(135deg, #1a73e8, #0d47a1);
+  background: linear-gradient(135deg, #2563eb, #1e293b);
   color: white; font-size: 0.72rem; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
@@ -451,7 +451,7 @@ const initials = (name: string): string => {
 /* Spinners */
 .spinner {
   width: 36px; height: 36px;
-  border: 4px solid #e0e0e0; border-top-color: #1a73e8;
+  border: 4px solid #e0e0e0; border-top-color: #2563eb;
   border-radius: 50%; animation: spin 0.75s linear infinite;
 }
 .spinner-sm {
@@ -474,16 +474,16 @@ const initials = (name: string): string => {
   text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.25);
 }
 .modal-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
-.modal-box h3 { font-size: 1.2rem; margin-bottom: 0.5rem; color: #1a1a2e; }
+.modal-box h3 { font-size: 1.2rem; margin-bottom: 0.5rem; color: #111827; }
 .modal-box p { font-size: 0.93rem; color: #555; }
-.modal-warning { color: #c62828; font-size: 0.82rem; margin-top: 0.35rem; }
+.modal-warning { color: #b91c1c; font-size: 0.82rem; margin-top: 0.35rem; }
 .modal-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; justify-content: center; }
 .btn-danger {
-  padding: 0.65rem 1.4rem; background: #d32f2f;
+  padding: 0.65rem 1.4rem; background: #dc2626;
   color: white; border: none; border-radius: 8px;
   font-size: 0.93rem; font-weight: 600; cursor: pointer; transition: background 0.2s;
 }
-.btn-danger:hover:not(:disabled) { background: #b71c1c; }
+.btn-danger:hover:not(:disabled) { background: #b91c1c; }
 .btn-danger:disabled { background: #ef9a9a; cursor: not-allowed; }
 
 .modal-enter-active, .modal-leave-active { transition: all 0.22s ease; }
@@ -495,4 +495,5 @@ const initials = (name: string): string => {
   .layout-grid { grid-template-columns: 1fr; }
 }
 </style>
+
 

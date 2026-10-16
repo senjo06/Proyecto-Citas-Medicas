@@ -1,29 +1,30 @@
 <template>
-  <div class="layout-wrapper">
+  <div class="layout">
 
-    <!-- Navbar Admin -->
-    <nav class="navbar" role="navigation" aria-label="Panel de administración">
+    <nav class="navbar">
       <div class="nav-brand">
-        <span class="brand-name">Admin</span>
-        <span class="brand-sep">|</span>
-        <span class="brand-sub">Citas Médicas</span>
+        <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <path d="M12 8v8M8 12h8"/>
+        </svg>
+        <span>Panel Admin</span>
+        <span class="brand-divider"></span>
+        <span class="brand-sub">Centro Médico</span>
       </div>
 
       <div class="nav-links">
-        <router-link to="/admin/hoy" class="nav-link" active-class="active">Agenda del día</router-link>
+        <router-link to="/admin/hoy"        class="nav-link" active-class="active">Agenda de hoy</router-link>
         <router-link to="/admin/reservados" class="nav-link" active-class="active">Reservados</router-link>
-        <router-link to="/admin/usuarios" class="nav-link" active-class="active">Usuarios</router-link>
+        <router-link to="/admin/usuarios"   class="nav-link" active-class="active">Usuarios</router-link>
       </div>
 
-      <div class="nav-right">
+      <div class="nav-end">
         <NotificationBell />
-        <button class="btn-logout" @click="handleLogout">
-          {{ authStore.user?.name }} | Salir
-        </button>
+        <span class="nav-user">{{ authStore.user?.name }}</span>
+        <button class="btn-nav-action" @click="handleLogout">Cerrar sesión</button>
       </div>
     </nav>
 
-    <!-- Contenido -->
     <main class="main-content">
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
@@ -32,13 +33,8 @@
       </router-view>
     </main>
 
-    <!-- Footer -->
     <footer class="footer">
-      <div class="footer-inner">
-        <span>Panel de Administración</span>
-        <span class="footer-sep">|</span>
-        <span>Citas Médicas &mdash; PostgreSQL + Express + Vue 3</span>
-      </div>
+      Panel de Administración &nbsp;&mdash;&nbsp; Centro Médico
     </footer>
 
   </div>
@@ -48,18 +44,13 @@
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth.store';
 import NotificationBell from '../components/NotificationBell.vue';
-
-const router = useRouter();
+const router    = useRouter();
 const authStore = useAuthStore();
-
-const handleLogout = () => {
-  authStore.logout();
-  router.push('/');
-};
+const handleLogout = () => { authStore.logout(); router.push('/'); };
 </script>
 
 <style scoped>
-.layout-wrapper {
+.layout {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -69,10 +60,9 @@ const handleLogout = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: linear-gradient(135deg, #1b1b2f 0%, #2d2b55 100%);
+  background: #1e293b;
   padding: 0 2rem;
-  height: 60px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.35);
+  height: 56px;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -81,56 +71,40 @@ const handleLogout = () => {
 .nav-brand {
   display: flex;
   align-items: center;
-  gap: 0.45rem;
-  color: white;
-  font-weight: 700;
+  gap: 0.5rem;
   user-select: none;
 }
-.brand-icon { font-size: 1.3rem; }
-.brand-name { font-size: 1.1rem; color: #f0c040; }
-.brand-sep { color: rgba(255,255,255,0.3); }
-.brand-sub { font-size: 0.9rem; color: rgba(255,255,255,0.65); }
+.brand-icon { width: 18px; height: 18px; color: #60a5fa; }
+.nav-brand > span:nth-child(2) { font-size: 0.93rem; font-weight: 600; color: #f1f5f9; }
+.brand-divider { width: 1px; height: 16px; background: #334155; }
+.brand-sub { font-size: 0.8rem; color: #94a3b8; }
 
-.nav-links {
-  display: flex;
-  gap: 0.5rem;
-}
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
+.nav-links { display: flex; gap: 0.25rem; }
 .nav-link {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: rgba(255,255,255,0.75);
-  text-decoration: none;
-  font-size: 0.93rem;
-  font-weight: 500;
-  padding: 0.45rem 1rem;
-  border-radius: 8px;
-  border: 2px solid transparent;
-  transition: all 0.18s ease;
-}
-.nav-link:hover { background: rgba(255,255,255,0.1); color: white; text-decoration: none; }
-.nav-link.active { background: #f0c040; color: #1b1b2f; font-weight: 700; }
-
-.nav-icon { font-size: 1rem; }
-
-.btn-logout {
-  padding: 0.45rem 1rem;
-  background: rgba(255,255,255,0.08);
-  color: rgba(255,255,255,0.75);
-  border: 1.5px solid rgba(255,255,255,0.2);
-  border-radius: 8px;
+  padding: 0.35rem 0.85rem;
+  border-radius: 6px;
   font-size: 0.88rem;
   font-weight: 500;
-  cursor: pointer;
-  transition: all 0.18s;
+  color: #94a3b8;
+  text-decoration: none;
+  transition: all 0.15s;
 }
-.btn-logout:hover { background: #e53935; color: white; border-color: #e53935; }
+.nav-link:hover { color: #f1f5f9; background: #334155; text-decoration: none; }
+.nav-link.active { color: #bfdbfe; background: #1e3a5f; font-weight: 600; }
+
+.nav-end { display: flex; align-items: center; gap: 0.75rem; }
+.nav-user { font-size: 0.83rem; color: #94a3b8; }
+.btn-nav-action {
+  padding: 0.33rem 0.8rem;
+  background: transparent;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-nav-action:hover { border-color: #ef4444; color: #ef4444; }
 
 .main-content {
   flex: 1;
@@ -140,29 +114,20 @@ const handleLogout = () => {
   width: 100%;
 }
 
-/* Transición */
-.fade-enter-active, .fade-leave-active { transition: opacity 0.18s ease, transform 0.18s ease; }
-.fade-enter-from { opacity: 0; transform: translateY(6px); }
-.fade-leave-to   { opacity: 0; transform: translateY(-4px); }
+.fade-enter-active, .fade-leave-active { transition: opacity 0.15s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 
 .footer {
-  background-color: #0d1117;
-  color: rgba(255,255,255,0.4);
-  padding: 0.9rem 1.5rem;
-  font-size: 0.78rem;
+  background: #1e293b;
+  text-align: center;
+  padding: 0.85rem;
+  font-size: 0.75rem;
+  color: #475569;
 }
-.footer-inner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-.footer-sep { opacity: 0.25; }
 
 @media (max-width: 600px) {
-  .navbar { padding: 0 1rem; flex-wrap: wrap; height: auto; padding: 0.5rem 1rem; gap: 0.5rem; }
-  .brand-sep, .brand-sub { display: none; }
+  .navbar { padding: 0 1rem; flex-wrap: wrap; height: auto; gap: 0.5rem; padding: 0.5rem 1rem; }
+  .brand-sub, .brand-divider { display: none; }
   .main-content { padding: 1.25rem 1rem; }
 }
 </style>
