@@ -126,8 +126,33 @@ const handleLogout = () => { authStore.logout(); router.push('/'); };
 }
 
 @media (max-width: 600px) {
-  .navbar { padding: 0 1rem; flex-wrap: wrap; height: auto; gap: 0.5rem; padding: 0.5rem 1rem; }
+  .navbar {
+    height: auto;
+    min-height: 56px;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.55rem 1rem;
+  }
   .brand-sub, .brand-divider { display: none; }
+  .nav-links {
+    order: 3;
+    flex: 0 0 100%;
+    overflow-x: auto;
+    justify-content: flex-start;
+    scrollbar-width: none;
+  }
+  .nav-links::-webkit-scrollbar { display: none; }
+  .nav-link { flex-shrink: 0; }
+  .nav-end { margin-left: auto; }
+  .nav-user { display: none; }
+  .btn-nav-action { white-space: nowrap; }
   .main-content { padding: 1.25rem 1rem; }
+}
+
+@media (max-width: 360px) {
+  .navbar { padding-right: 0.75rem; padding-left: 0.75rem; }
+  .nav-brand > span:nth-child(2) { font-size: 0.85rem; }
+  .btn-nav-action { padding: 0.3rem 0.55rem; font-size: 0.78rem; }
+  .main-content { padding-right: 0.75rem; padding-left: 0.75rem; }
 }
 </style>

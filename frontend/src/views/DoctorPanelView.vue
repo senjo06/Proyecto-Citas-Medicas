@@ -327,6 +327,21 @@ const initials = (name: string) => {
   border-radius: 20px; text-transform: uppercase; letter-spacing: 0.4px;
 }
 
+@media (max-width: 600px) {
+  .summary-bar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem 0.5rem;
+    padding: 1rem;
+  }
+  .summary-card { min-width: 0; }
+  .btn-refresh { grid-column: 1 / -1; width: 100%; margin-left: 0; }
+  .dp-header { gap: 0.65rem; padding: 0.9rem; }
+  .dp-info { min-width: 0; }
+  .dp-stats { flex: 0 0 100%; }
+  .dp-table-wrap { max-width: 100%; }
+}
+
 /* Botón outline */
 .btn-outline { padding: 0.5rem 1rem; background: white; color: #2563eb; border: 1.5px solid #2563eb; border-radius: 7px; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: all 0.18s; }
 .btn-outline:hover { background: #eff6ff; }
@@ -335,4 +350,3 @@ const initials = (name: string) => {
 .spinner { width: 38px; height: 38px; border: 4px solid #e0e0e0; border-top-color: #2563eb; border-radius: 50%; animation: spin 0.75s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 </style>
-

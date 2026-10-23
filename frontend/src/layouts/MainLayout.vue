@@ -49,6 +49,7 @@ const handleLogout = () => { authStore.logout(); router.push('/'); };
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background: #f6f8fa;
 }
 
 /* ── Navbar ── */
@@ -56,45 +57,49 @@ const handleLogout = () => { authStore.logout(); router.push('/'); };
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 0 2rem;
-  height: 56px;
+  background: rgba(255, 255, 255, 0.96);
+  border-bottom: 1px solid #e7ecef;
+  padding: 0 max(1.5rem, calc((100% - 1140px) / 2));
+  height: 68px;
   position: sticky;
   top: 0;
   z-index: 100;
+  box-shadow: 0 2px 12px rgba(21, 43, 53, 0.035);
 }
 
 .nav-brand {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #111827;
+  font-size: 0.97rem;
+  font-weight: 700;
+  color: #18343c;
   user-select: none;
 }
 .brand-icon {
-  width: 18px;
-  height: 18px;
-  color: #2563eb;
+  width: 34px;
+  height: 34px;
+  padding: 7px;
+  border-radius: 10px;
+  color: #0f8179;
+  background: #e8f7f5;
 }
 
 .nav-links {
   display: flex;
-  gap: 0.25rem;
+  gap: 0.35rem;
 }
 .nav-link {
-  padding: 0.35rem 0.85rem;
-  border-radius: 6px;
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
   font-size: 0.88rem;
   font-weight: 500;
-  color: #6b7280;
+  color: #64777d;
   text-decoration: none;
-  transition: all 0.15s;
+  transition: color 0.15s, background 0.15s;
 }
-.nav-link:hover { color: #111827; background: #f3f4f6; text-decoration: none; }
-.nav-link.active { color: #2563eb; background: #eff6ff; font-weight: 600; }
+.nav-link:hover { color: #173d43; background: #f2f7f7; text-decoration: none; }
+.nav-link.active { color: #0f766e; background: #eaf6f4; font-weight: 650; }
 
 .nav-end {
   display: flex;
@@ -103,25 +108,25 @@ const handleLogout = () => { authStore.logout(); router.push('/'); };
 }
 .nav-user {
   font-size: 0.85rem;
-  color: #374151;
-  font-weight: 500;
+  color: #496168;
+  font-weight: 550;
 }
 .btn-nav-action {
-  padding: 0.35rem 0.85rem;
+  padding: 0.45rem 0.8rem;
   background: transparent;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
+  border: 1px solid #e1e8eb;
+  border-radius: 8px;
   font-size: 0.83rem;
-  color: #6b7280;
+  color: #64777d;
   cursor: pointer;
   transition: all 0.15s;
 }
-.btn-nav-action:hover { border-color: #dc2626; color: #dc2626; background: #fef2f2; }
+.btn-nav-action:hover { border-color: #f1c9c9; color: #b93838; background: #fff7f7; }
 
 /* ── Contenido ── */
 .main-content {
   flex: 1;
-  padding: 2rem 1.5rem;
+  padding: 2rem 1.5rem 2.75rem;
   max-width: 1140px;
   margin: 0 auto;
   width: 100%;
@@ -133,17 +138,41 @@ const handleLogout = () => { authStore.logout(); router.push('/'); };
 
 /* ── Footer ── */
 .footer {
-  background: #ffffff;
-  border-top: 1px solid #e5e7eb;
+  background: #fff;
+  border-top: 1px solid #e7ecef;
   text-align: center;
   padding: 0.85rem;
   font-size: 0.75rem;
-  color: #9ca3af;
+  color: #87979b;
 }
 
 @media (max-width: 600px) {
-  .navbar { padding: 0 1rem; }
+  .navbar {
+    height: auto;
+    min-height: 60px;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+  }
+  .nav-links {
+    order: 3;
+    flex: 0 0 100%;
+    overflow-x: auto;
+    justify-content: flex-start;
+    scrollbar-width: none;
+  }
+  .nav-links::-webkit-scrollbar { display: none; }
+  .nav-link { flex-shrink: 0; }
+  .nav-end { margin-left: auto; }
   .nav-user { display: none; }
+  .btn-nav-action { white-space: nowrap; }
   .main-content { padding: 1.25rem 1rem; }
+}
+
+@media (max-width: 360px) {
+  .navbar { padding-right: 0.75rem; padding-left: 0.75rem; }
+  .nav-brand { font-size: 0.85rem; }
+  .btn-nav-action { padding: 0.3rem 0.55rem; font-size: 0.78rem; }
+  .main-content { padding-right: 0.75rem; padding-left: 0.75rem; }
 }
 </style>

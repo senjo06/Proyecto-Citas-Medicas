@@ -2,8 +2,24 @@
   <div class="home-view">
 
     <header class="page-header">
-      <h1>Agenda de Turnos Médicos</h1>
-      <p class="subtitle">Seleccioná un especialista para ver su disponibilidad.</p>
+      <div class="page-heading">
+        <span class="eyebrow">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 3v18M3 12h18" />
+          </svg>
+          CUIDAMOS DE VOS
+        </span>
+        <h1>Encontrá al especialista ideal</h1>
+        <p class="subtitle">Elegí un profesional y consultá los horarios disponibles para tu próxima cita.</p>
+      </div>
+      <div class="specialist-count">
+        <span class="count-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM20 8v6m3-3h-6" />
+          </svg>
+        </span>
+        <span><strong>{{ doctors.length }}</strong> especialistas</span>
+      </div>
     </header>
 
     <!-- Alertas -->
@@ -53,20 +69,29 @@
     <!-- Lista de doctores -->
     <div v-else-if="!selectedDoctorName">
       <div class="doctors-grid">
-        <div
+        <button
           v-for="doc in doctors"
           :key="doc.name"
+          type="button"
           class="doctor-card"
           @click="openDoctor(doc.name)"
+          :aria-label="`Consultar horarios de ${doc.name}, ${doc.specialty}`"
         >
-          <div class="doctor-avatar">{{ initials(doc.name) }}</div>
+          <div class="doctor-card-top">
+            <div class="doctor-avatar">{{ initials(doc.name) }}</div>
+            <span class="doctor-arrow" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+            </span>
+          </div>
           <div class="doctor-info">
             <h3>{{ doc.name }}</h3>
             <span class="specialty-badge">{{ doc.specialty }}</span>
-            <p class="doctor-slots-count">Ver disponibilidad</p>
           </div>
-          <span class="doctor-arrow">›</span>
-        </div>
+          <span class="doctor-card-action">
+            Consultar horarios
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+          </span>
+        </button>
       </div>
     </div>
 
@@ -153,13 +178,13 @@
       </div>
     </div>
 
-    <!-- Modal: ya tiene turno ese día -->
+    <!-- Modal: ya tiene un turno en ese horario -->
     <Teleport to="body">
       <transition name="modal">
         <div v-if="conflictVisible" class="modal-overlay" @click.self="conflictVisible = false">
           <div class="modal-box">
-            <h3>Ya tenés un turno reservado</h3>
-            <p>Ya tenés un turno asignado para ese día.</p>
+            <h3>Ya tenés un turno a esa hora</h3>
+            <p>No podés reservar dos turnos para la misma fecha y hora.</p>
             <p class="modal-warn">Podés cancelarlo y tomar el nuevo, o mantener el actual.</p>
             <div class="modal-actions">
               <button class="btn-ghost" @click="conflictVisible = false">Mantener actual</button>
@@ -278,7 +303,12 @@ const calCells = computed(() => {
 
 const prevMonth = () => { if (calMonth.value === 0) { calMonth.value = 11; calYear.value--; } else calMonth.value--; selDay.value = null; };
 const nextMonth = () => { if (calMonth.value === 11) { calMonth.value = 0; calYear.value++; } else calMonth.value++; selDay.value = null; };
-const pickDay   = (cell: { day: number; month: number; year: number }) => { selDay.value = cell.day; selMonth.value = cell.month; selYear.value = cell.year; };
+const pickDay   = (cell: { day: number | null; month: number; year: number }) => {
+  if (cell.day === null) return;
+  selDay.value = cell.day;
+  selMonth.value = cell.month;
+  selYear.value = cell.year;
+};
 
 // Turnos del día seleccionado
 const daySlots = computed(() => {
@@ -418,10 +448,50 @@ const initials = (name: string) => {
 
 <style scoped>
 /* ── Reset de estilos heredados del diseño anterior ── */
-.home-view { width: 100%; }
-.page-header { margin-bottom: 1.5rem; }
-.page-header h1 { font-size: 1.35rem; font-weight: 600; color: #111827; margin-bottom: 0.2rem; }
-.subtitle { font-size: 0.85rem; color: #6b7280; }
+.home-view { width: 100%; max-width: 1100px; margin: 0 auto; }
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding: 2rem 2.1rem;
+  border: 1px solid #dceae9;
+  border-radius: 18px;
+  background:
+    radial-gradient(ellipse at 90% 0%, rgba(20, 184, 166, 0.12), transparent 38%),
+    linear-gradient(120deg, #ffffff 0%, #f2fbfa 100%);
+  box-shadow: 0 8px 24px rgba(15, 58, 71, 0.045);
+}
+.page-heading { max-width: 650px; }
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.8rem;
+  color: #0f766e;
+  font-size: 0.7rem;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+}
+.eyebrow svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2.5; }
+.page-header h1 { font-size: clamp(1.65rem, 3vw, 2.15rem); font-weight: 700; letter-spacing: -0.04em; color: #12313a; margin-bottom: 0.45rem; }
+.subtitle { font-size: 0.96rem; color: #647b80; max-width: 520px; }
+.specialist-count {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex-shrink: 0;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid #dceae9;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.82);
+  color: #527077;
+  font-size: 0.82rem;
+}
+.specialist-count strong { color: #173c43; font-size: 1rem; }
+.count-icon { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: #e8f7f5; color: #0f8b83; }
+.count-icon svg { width: 19px; height: 19px; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 
 /* Alertas */
 .alert { display: flex; align-items: center; justify-content: space-between; padding: 0.65rem 0.9rem; border-radius: 6px; margin-bottom: 1rem; font-size: 0.88rem; font-weight: 500; }
@@ -451,18 +521,38 @@ const initials = (name: string) => {
 .state-box { display: flex; flex-direction: column; align-items: center; gap: 0.65rem; padding: 3rem; background: white; border: 1px solid #e5e7eb; border-radius: 8px; color: #9ca3af; font-size: 0.9rem; }
 
 /* Lista doctores */
-.doctors-grid { display: flex; flex-direction: column; gap: 0.5rem; }
-.doctor-card { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem 1.1rem; display: flex; align-items: center; gap: 0.9rem; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
-.doctor-card:hover { border-color: #93c5fd; box-shadow: 0 0 0 3px rgba(37,99,235,0.06); }
-.doctor-avatar { width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; background: #eff6ff; color: #2563eb; font-size: 0.95rem; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 1px solid #bfdbfe; }
+.doctors-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.doctor-card {
+  min-width: 0;
+  min-height: 198px;
+  padding: 1.15rem 1.2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: left;
+  color: inherit;
+  background: #fff;
+  border: 1px solid #e4e9ed;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(19, 44, 57, 0.035);
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.doctor-card:hover { transform: translateY(-3px); border-color: #9bd5d0; box-shadow: 0 12px 28px rgba(15, 84, 91, 0.1); }
+.doctor-card:focus-visible { outline: 3px solid rgba(13, 148, 136, 0.35); outline-offset: 3px; }
+.doctor-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.doctor-avatar { width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0; background: linear-gradient(145deg, #e8f7f5, #d7eeec); color: #0f766e; font-size: 0.95rem; font-weight: 750; display: flex; align-items: center; justify-content: center; border: 1px solid #d5ece9; }
+.doctor-arrow { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid #e8edef; border-radius: 50%; color: #80969a; transition: background 0.18s ease, color 0.18s ease; }
+.doctor-arrow svg, .doctor-card-action svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.doctor-card:hover .doctor-arrow { color: #fff; background: #0f8b83; border-color: #0f8b83; }
 .doctor-avatar.lg { width: 52px; height: 52px; font-size: 1.1rem; }
-.doctor-info { flex: 1; }
-.doctor-info h3 { font-size: 0.95rem; font-weight: 600; color: #111827; margin-bottom: 0.25rem; }
-.doctor-slots-count { font-size: 0.78rem; color: #9ca3af; margin-top: 0.2rem; }
-.doctor-arrow { font-size: 1.2rem; color: #d1d5db; }
-.doctor-card:hover .doctor-arrow { color: #2563eb; }
+.doctor-info { flex: 1; min-width: 0; }
+.doctor-info h3 { font-size: 1rem; font-weight: 650; color: #18343c; margin-bottom: 0.55rem; overflow-wrap: anywhere; }
+.doctor-card-action { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-top: auto; padding-top: 0.9rem; color: #0f8179; font-size: 0.8rem; font-weight: 650; }
+.doctor-card-action svg { transition: transform 0.18s ease; }
+.doctor-card:hover .doctor-card-action svg { transform: translateX(3px); }
 
-.specialty-badge { display: inline-block; background: #f1f5f9; color: #475569; font-size: 0.7rem; font-weight: 600; padding: 0.1rem 0.5rem; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.3px; border: 1px solid #e2e8f0; }
+.specialty-badge { display: inline-block; max-width: 100%; background: #f0f7f7; color: #487176; font-size: 0.68rem; font-weight: 650; padding: 0.25rem 0.55rem; border-radius: 5px; text-transform: uppercase; letter-spacing: 0.055em; border: 1px solid #e0eeee; overflow-wrap: anywhere; }
 
 /* Breadcrumb */
 .breadcrumb { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 1rem; font-size: 0.83rem; color: #9ca3af; }
@@ -537,6 +627,29 @@ const initials = (name: string) => {
 .spinner-sm { display: inline-block; width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-@media (max-width: 860px) { .calendar-layout { grid-template-columns: 1fr; } }
-@media (max-width: 480px) { .page-header h1 { font-size: 1.15rem; } }
+@media (max-width: 900px) {
+  .doctors-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 860px) { .calendar-layout { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 480px) {
+  .page-header { align-items: flex-start; flex-direction: column; gap: 1rem; padding: 1.35rem; margin-bottom: 1.25rem; border-radius: 14px; }
+  .page-header h1 { font-size: 1.55rem; }
+  .subtitle { font-size: 0.9rem; }
+  .specialist-count { padding: 0.45rem 0.65rem; }
+  .count-icon { width: 31px; height: 31px; }
+  .doctors-grid { grid-template-columns: 1fr; gap: 0.75rem; }
+  .doctor-card { min-height: 172px; }
+  .my-appointments { padding: 0.85rem; }
+  .my-item { align-items: flex-start; }
+  .my-item-actions { width: 100%; }
+  .my-item-actions button { flex: 1; }
+  .calendar-card, .slots-panel { padding: 0.85rem; min-width: 0; }
+  .cal-legend { gap: 0.5rem; }
+  .modal-actions { flex-direction: column-reverse; }
+  .modal-actions button { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doctor-card, .doctor-arrow, .doctor-card-action svg { transition: none; }
+}
 </style>

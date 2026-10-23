@@ -420,7 +420,10 @@ const initials = (name: string): string => {
 @keyframes spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 480px) {
-  .page-header h1 { font-size: 1.5rem; }
+  .page-header h1 { font-size: 1.25rem; }
+  .card { padding: 0.75rem; }
+  .table-wrapper { max-width: 100%; }
+  .modal-actions { flex-direction: column-reverse; }
+  .modal-actions button { width: 100%; }
 }
 </style>
-
