@@ -1,186 +1,113 @@
-# 🏥 Sistema de Gestión de Citas Médicas
+﻿# 🏥 Sistema de Gestión de Citas Médicas
 
-Aplicación fullstack para la reserva de turnos médicos con manejo de **condiciones de carrera** mediante transacciones pesimistas (`SELECT FOR UPDATE`) en PostgreSQL.
+Aplicación fullstack para reservar citas médicas con control de concurrencia, autenticación por roles y administración de turnos.
 
----
+Este proyecto combina un frontend en Vue con un backend en Express y una base de datos PostgreSQL, y su objetivo principal es asegurar que dos pacientes no puedan reservar el mismo turno al mismo tiempo.
 
-## 📋 Tabla de contenidos
+## ✨ Características principales
 
-- [Descripción del proyecto](#descripción-del-proyecto)
-- [Tecnologías utilizadas](#tecnologías-utilizadas)
-- [Arquitectura](#arquitectura)
-- [Estructura del proyecto](#estructura-del-proyecto)
-- [Instalación y configuración](#instalación-y-configuración)
-- [Uso](#uso)
-- [API REST](#api-rest)
-- [Concepto clave: SELECT FOR UPDATE](#concepto-clave-select-for-update)
-- [Base de datos](#base-de-datos)
+- Reserva de citas médicas por especialista y fecha.
+- Gestión de usuarios con autenticación.
+- Panel para administrador con vista de turnos reservados.
+- Notificaciones internas para cambios en citas.
+- Seguridad con contraseñas hasheadas usando `bcryptjs`.
+- API REST documentada con Swagger.
+- Prevención de condiciones de carrera con `SELECT FOR UPDATE` en PostgreSQL.
 
----
-
-## Descripción del proyecto
-
-Este proyecto demuestra cómo evitar **condiciones de carrera** en un sistema de reservas médicas concurrentes. El caso de uso central es: dos pacientes intentan reservar el mismo turno al mismo tiempo — solo uno puede ganar, y el sistema lo garantiza a nivel de base de datos usando bloqueo pesimista.
-
-**Funcionalidades:**
-- Ver turnos médicos disponibles en tiempo real
-- Reservar un turno de forma atómica y segura
-- CRUD completo de pacientes (usuarios)
-- Contraseñas hasheadas con bcrypt
-- Documentación Swagger interactiva
-
----
-
-## Tecnologías utilizadas
+## 🧩 Stack tecnológico
 
 ### Backend
-| Tecnología | Versión | Uso |
-|---|---|---|
-| Node.js | 18+ | Entorno de ejecución |
-| Express | 4.x | Framework HTTP |
-| PostgreSQL | 14+ | Base de datos relacional |
-| pg (node-postgres) | 8.x | Driver de PostgreSQL |
-| bcryptjs | 2.x | Hash de contraseñas |
-| cors | 2.x | Política de origen cruzado |
-| dotenv | 16.x | Variables de entorno |
-| swagger-jsdoc | 6.x | Generación de spec OpenAPI |
-| swagger-ui-express | 5.x | Documentación interactiva |
-| nodemon | 3.x | Recarga automática en desarrollo |
+- Node.js
+- Express
+- PostgreSQL
+- pg
+- bcryptjs
+- Swagger
 
 ### Frontend
-| Tecnología | Versión | Uso |
-|---|---|---|
-| Vue 3 | 3.5 | Framework reactivo (Composition API) |
-| TypeScript | 6.x | Tipado estático |
-| Vue Router | 4.x | Navegación SPA |
-| Pinia | 4.x | Manejo de estado global |
-| Axios | 1.x | Cliente HTTP |
-| Vite | 8.x | Build tool y dev server |
+- Vue 3
+- TypeScript
+- Pinia
+- Vue Router
+- Axios
+- Vite
 
----
+## 🏗️ Arquitectura
 
-## Arquitectura
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        FRONTEND                              │
-│  Vue 3 + TypeScript + Pinia + Vue Router (puerto 5173)      │
-│                                                             │
-│  ┌──────────┐   ┌──────────┐   ┌──────────┐               │
-│  │ HomeView │   │UsersView │   │MainLayout│               │
-│  │(turnos)  │   │(CRUD)    │   │(navbar)  │               │
-│  └────┬─────┘   └────┬─────┘   └──────────┘               │
-│       │              │                                      │
-│  ┌────▼──────────────▼────┐                                │
-│  │    Stores (Pinia)       │ appointment.store / user.store │
-│  └────────────┬────────────┘                               │
-│               │ axios                                       │
-│  ┌────────────▼────────────┐                               │
-│  │    Services (TypeScript) │ appointment.service / user... │
-│  └─────────────────────────┘                               │
-└──────────────────┬──────────────────────────────────────────┘
-                   │ HTTP (proxy Vite → localhost:3000)
-┌──────────────────▼──────────────────────────────────────────┐
-│                        BACKEND                               │
-│  Node.js + Express (puerto 3000)                            │
-│                                                             │
-│  /api/users        →  user.routes    → user.controller      │
-│  /api/appointments →  appt.routes   → appt.controller      │
-│  /api-docs         →  Swagger UI                           │
-│                                                             │
-│  ┌────────────────────────────────────────────────┐        │
-│  │  Middleware: cors / express.json / errorHandler │        │
-│  └────────────────────────────────────────────────┘        │
-└──────────────────┬──────────────────────────────────────────┘
-                   │ pg Pool (conexiones)
-┌──────────────────▼──────────────────────────────────────────┐
-│                      POSTGRESQL                              │
-│  Tabla: users         Tabla: appointments                   │
-│  - id, name, email    - id, doctor_name, specialty          │
-│  - password (bcrypt)  - appointment_date, appointment_time  │
-│  - created_at         - is_booked, user_id, booked_at       │
-└─────────────────────────────────────────────────────────────┘
+```text
+Frontend (Vue 3) :5173
+    │
+    ├── Pinia stores
+    ├── Vue Router
+    └── Axios
+        │
+        ▼
+Backend (Express) :3000
+    │
+    ├── routes/
+    ├── controllers/
+    ├── models/
+    └── middleware/
+        │
+        ▼
+PostgreSQL
+    ├── users
+    ├── appointments
+    └── notifications
 ```
 
----
+## 📁 Estructura principal
 
-## Estructura del proyecto
-
-```
-Proyecto-Citas Medicas/
-│
-├── backweb/backweb/              # Backend Node.js + Express
+```text
+Proyecto-Citas-Medicas/
+├── README.md
+├── DOCUMENTACION.md
+├── backweb/
+│   └── backweb/
+│       ├── src/
+│       │   ├── config/
+│       │   ├── controllers/
+│       │   ├── middleware/
+│       │   ├── models/
+│       │   ├── routes/
+│       │   └── index.js
+│       ├── package.json
+│       └── .env
+├── frontend/
 │   ├── src/
-│   │   ├── config/
-│   │   │   ├── db.js             # Pool de conexiones PostgreSQL
-│   │   │   ├── migrate.js        # Migraciones automáticas al arrancar
-│   │   │   └── swagger.js        # Configuración OpenAPI/Swagger
-│   │   ├── controllers/
-│   │   │   ├── user.controller.js         # CRUD de usuarios
-│   │   │   └── appointment.controller.js  # Reserva de turnos
-│   │   ├── middleware/
-│   │   │   └── errorHandler.js   # Manejo global de errores
-│   │   ├── models/
-│   │   │   ├── user.model.js         # Queries de usuarios con bcrypt
-│   │   │   └── appointment.model.js  # SELECT FOR UPDATE (core)
-│   │   ├── routes/
-│   │   │   ├── user.routes.js         # GET/POST/PUT/DELETE /api/users
-│   │   │   └── appointment.routes.js  # GET /available, POST /book
-│   │   └── index.js              # Entrada del servidor
-│   ├── .env                      # Variables de entorno (no se sube a git)
-│   ├── .env.example              # Plantilla de variables de entorno
-│   └── package.json
-│
-└── frontend/                     # Frontend Vue 3 + TypeScript
-    ├── src/
-    │   ├── layouts/
-    │   │   └── MainLayout.vue    # Navbar + router-view + footer
-    │   ├── views/
-    │   │   ├── HomeView.vue      # Listado y reserva de turnos
-    │   │   └── UsersView.vue     # CRUD de usuarios
-    │   ├── stores/
-    │   │   ├── appointment.store.ts  # Estado global de citas (Pinia)
-    │   │   └── user.store.ts         # Estado global de usuarios (Pinia)
-    │   ├── services/
-    │   │   ├── appointment.service.ts  # Llamadas axios a /api/appointments
-    │   │   └── user.service.ts         # Llamadas axios a /api/users
-    │   ├── router/
-    │   │   └── index.ts          # Rutas con MainLayout como padre
-    │   ├── App.vue               # Raíz — solo contiene <router-view>
-    │   ├── main.ts               # Registra Vue, Pinia y Router
-    │   └── style.css             # Estilos globales (reset + base)
-    ├── vite.config.ts            # Proxy /api → localhost:3000
-    └── package.json
+│   ├── package.json
+│   └── vite.config.ts
+└── proyectoxample/
+    └── ...
 ```
 
----
+## ⚙️ Requisitos previos
 
-## Instalación y configuración
-
-### Prerrequisitos
 - Node.js 18 o superior
-- PostgreSQL 14 o superior corriendo localmente
-- npm 9+
+- PostgreSQL 14 o superior
+- npm
+- Git
 
-### 1. Clonar el repositorio
+## 🚀 Instalación y ejecución
+
+### 1) Clonar el repositorio
 
 ```bash
 git clone https://github.com/senjo06/Proyecto-Citas-Medicas.git
 cd Proyecto-Citas-Medicas
 ```
 
-### 2. Configurar el backend
+### 2) Configurar el backend
 
 ```bash
 cd backweb/backweb
 npm install
 ```
 
-Crear el archivo `.env` basándose en `.env.example`:
+Crear un archivo `.env` con esta estructura:
 
 ```env
 PORT=3000
-
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=clase
@@ -188,179 +115,111 @@ DB_USER=postgres
 DB_PASSWORD=tu_contraseña
 ```
 
-> La base de datos `clase` debe existir en PostgreSQL antes de arrancar.  
-> Las tablas se crean automáticamente al iniciar el servidor.
-
-### 3. Configurar el frontend
+### 3) Configurar el frontend
 
 ```bash
+cd ../..
 cd frontend
 npm install
 ```
 
----
+### 4) Ejecutar la aplicación
 
-## Uso
-
-Arrancar ambos servidores en terminales separadas:
-
-**Terminal 1 — Backend:**
+Terminal 1 - Backend:
 ```bash
 cd backweb/backweb
 npm run dev
 ```
-Salida esperada:
-```
-⏳ Iniciando migración de la base de datos...
-✅ Migración completada. Tablas de usuarios y citas listas.
-🚀 Servidor en   http://localhost:3000
-📖 Swagger en    http://localhost:3000/api-docs
-```
 
-**Terminal 2 — Frontend:**
+Terminal 2 - Frontend:
 ```bash
 cd frontend
 npm run dev
 ```
-Luego abrir el navegador en `http://localhost:5173`
 
----
+Abrir en el navegador:
+- Frontend: `http://localhost:5173`
+- Swagger: `http://localhost:3000/api-docs`
 
-## API REST
+## 🔐 Roles y autenticación
 
-### Base URL
-```
-http://localhost:3000
-```
+### Administrador
+- Usuario: `admin`
+- Contraseña: `1234`
 
-### Turnos médicos — `/api/appointments`
+### Usuario normal
+- Puede autenticarse con email o nombre registrado y su contraseña.
 
+La sesión del usuario se guarda en `sessionStorage` y el router redirige según el rol.
+
+## 🩺 API REST principal
+
+### Autenticación
 | Método | Endpoint | Descripción |
 |---|---|---|
-| `GET` | `/api/appointments/available` | Lista todos los turnos disponibles (`is_booked = false`) |
-| `POST` | `/api/appointments/book` | Reserva un turno con `SELECT FOR UPDATE` |
+| `POST` | `/api/auth/login` | Login del sistema |
 
-**Body para reservar:**
-```json
-{
-  "appointmentId": 1,
-  "userId": 45
-}
-```
-
-**Respuestas posibles:**
-- `200 OK` — Turno reservado exitosamente
-- `400 Bad Request` — Faltan campos requeridos
-- `409 Conflict` — El turno ya fue reservado por otro paciente
-
-### Usuarios — `/api/users`
-
+### Usuarios
 | Método | Endpoint | Descripción |
 |---|---|---|
-| `GET` | `/api/users` | Lista todos los usuarios |
-| `GET` | `/api/users/:id` | Obtiene un usuario por ID |
-| `POST` | `/api/users` | Crea un nuevo usuario |
-| `PUT` | `/api/users/:id` | Actualiza nombre y email |
-| `DELETE` | `/api/users/:id` | Elimina un usuario |
+| `GET` | `/api/users` | Listar usuarios |
+| `POST` | `/api/users` | Crear usuario |
+| `PUT` | `/api/users/:id` | Actualizar usuario |
+| `DELETE` | `/api/users/:id` | Eliminar usuario |
 
-**Body para crear usuario:**
-```json
-{
-  "name": "Juan Pérez",
-  "email": "juan@correo.com",
-  "password": "micontraseña123"
-}
-```
+### Citas
+| Método | Endpoint | Descripción |
+|---|---|---|
+| `GET` | `/api/appointments/available` | Ver turnos disponibles |
+| `GET` | `/api/appointments/doctor` | Ver turnos por doctor |
+| `GET` | `/api/appointments/today` | Agenda del día |
+| `GET` | `/api/appointments/my` | Citas del usuario |
+| `GET` | `/api/appointments/booked` | Citas reservadas |
+| `POST` | `/api/appointments/book` | Reservar turno |
+| `DELETE` | `/api/appointments/:id/cancel` | Cancelar turno |
 
-> La documentación completa e interactiva está disponible en `http://localhost:3000/api-docs`
+### Notificaciones
+| Método | Endpoint | Descripción |
+|---|---|---|
+| `GET` | `/api/notifications` | Ver notificaciones |
+| `POST` | `/api/notifications` | Crear notificación |
+| `PATCH` | `/api/notifications/read-all` | Marcar todas como leídas |
 
----
+## 🧠 Concurrencia y bloqueo
 
-## Concepto clave: SELECT FOR UPDATE
+La lógica central del proyecto es la reserva segura de turnos. Cuando un paciente intenta reservar una cita, el backend bloquea la fila correspondiente con `SELECT ... FOR UPDATE` antes de confirmar la operación. Esto evita que dos usuarios reserven el mismo turno al mismo tiempo.
 
-El núcleo del proyecto es la prevención de condiciones de carrera. Sin bloqueo, si dos pacientes intentan reservar el mismo turno al mismo tiempo, ambos podrían leer `is_booked = false` y ambos procederían a reservarlo — resultando en una doble reserva.
-
-### Flujo con bloqueo pesimista
-
-```
-Paciente A                    PostgreSQL                  Paciente B
-    │                             │                            │
-    ├── BEGIN ──────────────────► │                            │
-    ├── SELECT ... FOR UPDATE ──► │ ◄─── SELECT ... FOR UPDATE ┤
-    │                             │ ← Paciente B ESPERA        │
-    ├── is_booked = false ───────►│                            │
-    ├── UPDATE SET is_booked=true►│                            │
-    ├── COMMIT ─────────────────► │                            │
-    │                             │ ─── Paciente B continúa ──►│
-    │                             │     is_booked = true       │
-    │                             │ ─── ERROR 409 ────────────►│
-```
-
-### Código implementado en `appointment.model.js`
+Un paciente puede reservar varios turnos, incluso el mismo día, siempre que no coincidan en la misma fecha y hora. El backend también serializa las reservas por paciente para evitar que dos solicitudes simultáneas infrinjan esta regla.
 
 ```javascript
-async bookSlot(appointmentId, userId) {
-  const client = await pool.connect();
-  try {
-    await client.query('BEGIN');
+await client.query('BEGIN');
+const result = await client.query(
+  'SELECT is_booked FROM appointments WHERE id = $1 FOR UPDATE',
+  [appointmentId]
+);
 
-    // Bloquea la fila — otras transacciones deben esperar
-    const { rows } = await client.query(
-      'SELECT is_booked FROM appointments WHERE id = $1 FOR UPDATE',
-      [appointmentId]
-    );
-
-    if (rows[0].is_booked) {
-      throw new Error('Este turno ya fue reservado por otro paciente.');
-    }
-
-    await client.query(
-      'UPDATE appointments SET is_booked = true, user_id = $2, booked_at = NOW() WHERE id = $1',
-      [appointmentId, userId]
-    );
-
-    await client.query('COMMIT');
-  } catch (error) {
-    await client.query('ROLLBACK');
-    throw error;
-  } finally {
-    client.release();
-  }
+if (result.rows[0].is_booked) {
+  throw new Error('Este turno ya fue reservado');
 }
-```
 
----
-
-## Base de datos
-
-### Tabla `users`
-```sql
-CREATE TABLE users (
-    id         SERIAL PRIMARY KEY,
-    name       VARCHAR(150) NOT NULL,
-    email      VARCHAR(150) NOT NULL UNIQUE,
-    password   VARCHAR(255) NOT NULL,   -- hash bcrypt
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+await client.query(
+  'UPDATE appointments SET is_booked = true, user_id = $2, booked_at = NOW() WHERE id = $1',
+  [appointmentId, userId]
 );
+
+await client.query('COMMIT');
 ```
 
-### Tabla `appointments`
-```sql
-CREATE TABLE appointments (
-    id               SERIAL PRIMARY KEY,
-    doctor_name      VARCHAR(150) NOT NULL,
-    specialty        VARCHAR(100) NOT NULL,
-    appointment_date DATE         NOT NULL,
-    appointment_time TIME         NOT NULL,
-    is_booked        BOOLEAN      NOT NULL DEFAULT FALSE,
-    user_id          INT          DEFAULT NULL,
-    booked_at        TIMESTAMP WITH TIME ZONE DEFAULT NULL
-);
-```
+## 📘 Documentación completa
 
-### Datos semilla
-Al arrancar el servidor se insertan automáticamente 10 turnos de prueba con distintos especialistas y fechas, usando `ON CONFLICT (id) DO NOTHING` para que sean idempotentes.
+La documentación técnica ampliada está disponible en:
 
----
+- [DOCUMENTACION.md](./DOCUMENTACION.md)
 
-> Proyecto desarrollado para la materia de Bases de Datos — Demostración de transacciones y concurrencia con PostgreSQL.
+## 🔗 Repositorio
+
+- GitHub: https://github.com/senjo06/Proyecto-Citas-Medicas
+
+## ✅ Nota final
+
+Este proyecto está pensado como una demostración práctica de arquitectura fullstack, autenticación por roles, manejo de reservas médicas y gestión de concurrencia en bases de datos relacionales.

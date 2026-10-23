@@ -149,6 +149,15 @@ const Appointment = {
     try {
       await client.query('BEGIN');
 
+      // Serializar reservas del mismo paciente para evitar conflictos simultáneos de horario.
+      const userRes = await client.query(
+        'SELECT id FROM users WHERE id = $1 FOR UPDATE',
+        [userId]
+      );
+      if (userRes.rows.length === 0) {
+        throw new Error('El paciente no existe.');
+      }
+
       // SELECT FOR UPDATE: Bloquea la fila en la base de datos de inmediato.
       // Si otra petición intenta leer este mismo ID al mismo tiempo, tendrá que esperar 
       // a que esta transacción termine (COMMIT), evitando duplicados perfectos.
@@ -166,16 +175,19 @@ const Appointment = {
         throw new Error('Lo sentimos, este turno ya fue reservado por otro paciente.');
       }
 
-      // Verificar que el usuario no tenga ya un turno ese mismo día
-      const sameDayQuery = `
-        SELECT id FROM appointments
-        WHERE user_id = $1
-          AND appointment_date = (SELECT appointment_date FROM appointments WHERE id = $2)
-          AND is_booked = true;
+      // Un paciente puede reservar varios turnos en el día, pero no a la misma hora.
+      const sameTimeQuery = `
+        SELECT existing.id
+        FROM appointments AS existing
+        JOIN appointments AS requested ON requested.id = $2
+        WHERE existing.user_id = $1
+          AND existing.appointment_date = requested.appointment_date
+          AND existing.appointment_time = requested.appointment_time
+          AND existing.is_booked = true;
       `;
-      const sameDayRes = await client.query(sameDayQuery, [userId, appointmentId]);
-      if (sameDayRes.rows.length > 0) {
-        throw new Error('YA_TIENE_TURNO:' + sameDayRes.rows[0].id);
+      const sameTimeRes = await client.query(sameTimeQuery, [userId, appointmentId]);
+      if (sameTimeRes.rows.length > 0) {
+        throw new Error('YA_TIENE_TURNO:' + sameTimeRes.rows[0].id);
       }
 
       // Si sigue libre, lo apartamos de forma atómica

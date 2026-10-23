@@ -95,7 +95,7 @@ const AppointmentController = {
         const existingId = err.message.split(':')[1];
         return res.status(409).json({
           success: false,
-          error: 'Ya tenés un turno reservado para ese día.',
+          error: 'Ya tenés un turno reservado para esa fecha y hora.',
           code: 'YA_TIENE_TURNO',
           existingId: parseInt(existingId)
         });
