@@ -12,6 +12,7 @@
 
       <div class="nav-links">
         <router-link to="/citas" class="nav-link" active-class="active">Turnos</router-link>
+        <router-link to="/citas/historial" class="nav-link" active-class="active">Historial</router-link>
         <router-link to="/citas/perfil" class="nav-link" active-class="active">Mi perfil</router-link>
       </div>
 

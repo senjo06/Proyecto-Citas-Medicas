@@ -76,7 +76,30 @@ const Appointment = {
     return rows;
   },
 
-  // 3. Obtener turnos reservados de un usuario específico (hoy o futuros)
+  // Historial de citas pasadas de un usuario
+  async getHistory(userId) {
+    const { rows } = await pool.query(
+      `SELECT id, doctor_name, specialty, appointment_date, appointment_time, booked_at
+       FROM appointments
+       WHERE user_id = $1 AND is_booked = true AND appointment_date < CURRENT_DATE
+       ORDER BY appointment_date DESC, appointment_time DESC`,
+      [userId]
+    );
+    return rows;
+  },
+
+  // Turnos de mañana del usuario (recordatorio)
+  async getReminder(userId) {
+    const { rows } = await pool.query(
+      `SELECT id, doctor_name, specialty, appointment_date, appointment_time
+       FROM appointments
+       WHERE user_id = $1 AND is_booked = true
+         AND appointment_date = CURRENT_DATE + INTERVAL '1 day'
+       ORDER BY appointment_time ASC`,
+      [userId]
+    );
+    return rows;
+  },
   async getByUser(userId) {
     const { rows } = await pool.query(
       `SELECT id, doctor_name, specialty, appointment_date, appointment_time, booked_at

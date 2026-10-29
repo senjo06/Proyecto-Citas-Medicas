@@ -8,6 +8,7 @@ import BookedView from '../views/BookedView.vue';
 import ProfileView from '../views/ProfileView.vue';
 import RegisterView from '../views/RegisterView.vue';
 import DoctorPanelView from '../views/DoctorPanelView.vue';
+import HistoryView from '../views/HistoryView.vue';
 
 const routes = [
   // ── Login (pública) ───────────────────────────────────────────────
@@ -39,6 +40,11 @@ const routes = [
         path: 'perfil',
         name: 'perfil',
         component: ProfileView
+      },
+      {
+        path: 'historial',
+        name: 'historial',
+        component: HistoryView
       }
     ]
   },

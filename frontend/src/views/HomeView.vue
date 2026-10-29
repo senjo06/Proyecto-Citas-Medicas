@@ -36,6 +36,18 @@
       </div>
     </transition>
 
+    <!-- Recordatorio: turno mañana -->
+    <div v-if="reminder.length > 0" class="reminder-banner">
+      <span class="reminder-icon">🔔</span>
+      <div class="reminder-content">
+        <strong>Recordatorio:</strong> Mañana tenés
+        {{ reminder.length === 1 ? 'un turno' : reminder.length + ' turnos' }}:
+        <span v-for="(r, i) in reminder" :key="r.id">
+          {{ r.doctor_name }} ({{ r.specialty }}) a las {{ formatTime(r.appointment_time) }}{{ i < reminder.length - 1 ? ', ' : '.' }}
+        </span>
+      </div>
+    </div>
+
     <!-- Mis turnos activos -->
     <div v-if="myAppointments.length > 0" class="my-appointments">
       <h2 class="my-title">Mis turnos reservados</h2>
@@ -233,6 +245,7 @@ const errorMsg   = ref<string | null>(null);
 const allSlots       = ref<Slot[]>([]);
 const allDoctors     = ref<DoctorInfo[]>([]);
 const myAppointments = ref<Slot[]>([]);
+const reminder       = ref<Slot[]>([]);
 
 // ── Conflicto ─────────────────────────────────────────────────────
 const conflictVisible    = ref(false);
@@ -358,7 +371,14 @@ const loadMine = async () => {
   } catch { myAppointments.value = []; }
 };
 
-onMounted(() => { loadAll(); loadMine(); });
+const loadReminder = async () => {
+  try {
+    const { data } = await axios.get(`${BASE}/api/appointments/reminder`, { params: { userId } });
+    reminder.value = data.data ?? [];
+  } catch { reminder.value = []; }
+};
+
+onMounted(() => { loadAll(); loadMine(); loadReminder(); });
 
 // Auto-cierra mensajes
 watch(successMsg, v => { if (v) setTimeout(() => successMsg.value = null, 4000); });
@@ -501,6 +521,17 @@ const initials = (name: string) => {
 .alert-close:hover { opacity: 1; }
 .slide-alert-enter-active, .slide-alert-leave-active { transition: all 0.2s; }
 .slide-alert-enter-from, .slide-alert-leave-to { opacity: 0; transform: translateY(-6px); }
+
+/* Recordatorio */
+.reminder-banner {
+  display: flex; align-items: flex-start; gap: 0.75rem;
+  background: #fffbeb; border: 1px solid #fcd34d;
+  border-radius: 8px; padding: 0.85rem 1rem;
+  margin-bottom: 1.25rem; font-size: 0.88rem; color: #92400e;
+}
+.reminder-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+.reminder-content { line-height: 1.5; }
+.reminder-content strong { font-weight: 700; }
 
 /* Mis turnos */
 .my-appointments { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 1rem 1.1rem; margin-bottom: 1.25rem; }

@@ -43,9 +43,11 @@ const AppointmentController = require('../controllers/appointment.controller');
  *                         type: string
  */
 router.get('/available', AppointmentController.getAvailable);
-router.get('/doctor', AppointmentController.getByDoctor);
-router.get('/today', AppointmentController.getToday);
-router.get('/my', AppointmentController.getMyAppointments);
+router.get('/doctor',   AppointmentController.getByDoctor);
+router.get('/today',    AppointmentController.getToday);
+router.get('/my',       AppointmentController.getMyAppointments);
+router.get('/history',  AppointmentController.getHistory);
+router.get('/reminder', AppointmentController.getReminder);
 
 /**
  * @swagger

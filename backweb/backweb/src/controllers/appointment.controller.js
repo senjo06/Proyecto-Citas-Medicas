@@ -2,6 +2,30 @@
 const AppointmentModel = require('../models/appointment.model');
 
 const AppointmentController = {
+  // GET /api/appointments/history?userId=X
+  async getHistory(req, res) {
+    const { userId } = req.query;
+    if (!userId) return res.status(400).json({ success: false, error: 'userId requerido.' });
+    try {
+      const rows = await AppointmentModel.getHistory(userId);
+      res.json({ success: true, data: rows });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  },
+
+  // GET /api/appointments/reminder?userId=X
+  async getReminder(req, res) {
+    const { userId } = req.query;
+    if (!userId) return res.status(400).json({ success: false, error: 'userId requerido.' });
+    try {
+      const rows = await AppointmentModel.getReminder(userId);
+      res.json({ success: true, data: rows });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  },
+
   // GET /api/appointments/available
   // Devuelve todos los turnos que aún no han sido reservados
   async getAvailable(req, res) {
