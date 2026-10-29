@@ -66,8 +66,14 @@ export const useAuthStore = defineStore('auth', {
           return true;
         }
         return false;
-      } catch (err: any) {
-        this.error = err.response?.data?.error || 'Error al iniciar sesión.';
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err) && !err.response) {
+          this.error = 'No se pudo conectar con el servidor. Iniciá el backend y verificá la conexión con PostgreSQL.';
+        } else if (axios.isAxiosError(err)) {
+          this.error = err.response?.data?.error || 'Error al iniciar sesión.';
+        } else {
+          this.error = 'Error al iniciar sesión.';
+        }
         return false;
       } finally {
         this.loading = false;

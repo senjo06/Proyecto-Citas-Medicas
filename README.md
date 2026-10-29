@@ -137,6 +137,8 @@ cd frontend
 npm run dev
 ```
 
+Importante: mantené abiertas las dos terminales. El frontend en `5173` no inicia la API; el inicio de sesión requiere que el backend también esté ejecutándose en `3000`.
+
 Abrir en el navegador:
 - Frontend: `http://localhost:5173`
 - Swagger: `http://localhost:3000/api-docs`
