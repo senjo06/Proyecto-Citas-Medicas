@@ -33,8 +33,7 @@ export interface UserResponse {
 }
 
 // Usa el proxy de Vite en desarrollo (/api → localhost:3000/api)
-const BASE_URL = import.meta.env.VITE_API_URL ?? '';
-const API_URL = `${BASE_URL}/api/users`;
+const API_URL = 'http://localhost:3000/api/users';
 
 export const UserService = {
   async fetchAll(): Promise<UserListResponse> {
