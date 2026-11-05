@@ -13,6 +13,19 @@ async function runMigrations() {
         created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
     );
 
+    -- ── Tabla de horarios de doctores ────────────────────────────────
+    CREATE TABLE IF NOT EXISTS doctor_schedules (
+        id              SERIAL PRIMARY KEY,
+        doctor_id       INT NOT NULL REFERENCES doctors(id) ON DELETE CASCADE,
+        day_of_week     INT NOT NULL CHECK (day_of_week BETWEEN 0 AND 6),
+        start_time      TIME NOT NULL,
+        end_time        TIME NOT NULL,
+        duration_minutes INT NOT NULL DEFAULT 30,
+        is_active       BOOLEAN NOT NULL DEFAULT TRUE,
+        created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        CONSTRAINT chk_valid_time CHECK (end_time > start_time)
+    );
+
     -- ── Tabla de usuarios ────────────────────────────────────────────
     CREATE TABLE IF NOT EXISTS users (
         id         SERIAL PRIMARY KEY,
@@ -73,7 +86,39 @@ async function runMigrations() {
     CREATE INDEX IF NOT EXISTS idx_notif_unread
       ON notifications (is_read, created_at DESC);
 
+    CREATE INDEX IF NOT EXISTS idx_doctor_schedules
+      ON doctor_schedules (doctor_id, day_of_week, is_active)
+      WHERE is_active = true;
+
     -- ── Datos semilla ────────────────────────────────────────────────
+    -- Doctores de ejemplo
+    INSERT INTO doctors (id, name, specialty) VALUES
+      (1, 'Dr. Camilo Namén', 'Medicina General'),
+      (2, 'Dra. María Ortega', 'Pediatría'),
+      (3, 'Dr. Johan Sebastián', 'Cardiología'),
+      (4, 'Dra. Laura Gómez', 'Dermatología'),
+      (5, 'Dr. Andrés Martínez', 'Traumatología'),
+      (6, 'Dra. Sofía Herrera', 'Ginecología'),
+      (7, 'Dr. Felipe Ruiz', 'Neurología')
+    ON CONFLICT (id) DO NOTHING;
+
+    -- Horarios de ejemplo (0=Domingo, 1=Lunes, ..., 6=Sábado)
+    INSERT INTO doctor_schedules (doctor_id, day_of_week, start_time, end_time, duration_minutes) VALUES
+      -- Dr. Camilo Namén: Lunes a Viernes 8:00-12:00
+      (1, 1, '08:00:00', '12:00:00', 30),
+      (1, 2, '08:00:00', '12:00:00', 30),
+      (1, 3, '08:00:00', '12:00:00', 30),
+      (1, 4, '08:00:00', '12:00:00', 30),
+      (1, 5, '08:00:00', '12:00:00', 30),
+      -- Dra. María Ortega: Lunes, Miércoles, Viernes 9:00-13:00
+      (2, 1, '09:00:00', '13:00:00', 30),
+      (2, 3, '09:00:00', '13:00:00', 30),
+      (2, 5, '09:00:00', '13:00:00', 30),
+      -- Dr. Johan Sebastián: Martes y Jueves 14:00-18:00
+      (3, 2, '14:00:00', '18:00:00', 30),
+      (3, 4, '14:00:00', '18:00:00', 30)
+    ON CONFLICT DO NOTHING;
+
     INSERT INTO appointments (id, doctor_name, specialty, appointment_date, appointment_time)
     VALUES
       (1,  'Dr. Camilo Namén',      'Medicina General',  '2026-10-15', '08:00:00'),

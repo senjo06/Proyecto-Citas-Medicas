@@ -9,6 +9,7 @@ const appointmentRoutes = require('./routes/appointment.routes');
 const authRoutes = require('./routes/auth.routes');
 const notificationRoutes = require('./routes/notification.routes');
 const doctorRoutes = require('./routes/doctor.routes');
+const doctorScheduleRoutes = require('./routes/doctor-schedule.routes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -33,6 +34,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/doctors', doctorRoutes);
+app.use('/api/doctor-schedules', doctorScheduleRoutes);
 
 // Health check
 app.get('/', (req, res) => {
