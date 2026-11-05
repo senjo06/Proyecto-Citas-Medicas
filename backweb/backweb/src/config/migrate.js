@@ -101,8 +101,8 @@ async function runMigrations() {
       (6, 'Dra. Sofía Herrera', 'Ginecología'),
       (7, 'Dr. Felipe Ruiz', 'Neurología'),
       (8, 'Dra. Claudia Vargas', 'Endocrinología'),
-      (9, 'Dra. Valentina Torres', 'Oftalmología'),
-      (10, 'Dr. Ricardo Salazar', 'Psiquiatría')
+      (9, 'Dra. Valentina Cruz', 'Oftalmología'),
+      (10, 'Dr. Ricardo Morales', 'Psiquiatría')
     ON CONFLICT (id) DO NOTHING;
 
     -- Horarios de ejemplo (0=Domingo, 1=Lunes, ..., 6=Sábado)
