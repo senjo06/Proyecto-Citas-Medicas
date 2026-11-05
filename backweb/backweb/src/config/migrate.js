@@ -99,7 +99,10 @@ async function runMigrations() {
       (4, 'Dra. Laura Gómez', 'Dermatología'),
       (5, 'Dr. Andrés Martínez', 'Traumatología'),
       (6, 'Dra. Sofía Herrera', 'Ginecología'),
-      (7, 'Dr. Felipe Ruiz', 'Neurología')
+      (7, 'Dr. Felipe Ruiz', 'Neurología'),
+      (8, 'Dra. Claudia Vargas', 'Endocrinología'),
+      (9, 'Dra. Valentina Torres', 'Oftalmología'),
+      (10, 'Dr. Ricardo Salazar', 'Psiquiatría')
     ON CONFLICT (id) DO NOTHING;
 
     -- Horarios de ejemplo (0=Domingo, 1=Lunes, ..., 6=Sábado)
@@ -116,7 +119,39 @@ async function runMigrations() {
       (2, 5, '09:00:00', '13:00:00', 30),
       -- Dr. Johan Sebastián: Martes y Jueves 14:00-18:00
       (3, 2, '14:00:00', '18:00:00', 30),
-      (3, 4, '14:00:00', '18:00:00', 30)
+      (3, 4, '14:00:00', '18:00:00', 30),
+      -- Dra. Laura Gómez: Lunes a Viernes 10:00-14:00
+      (4, 1, '10:00:00', '14:00:00', 30),
+      (4, 2, '10:00:00', '14:00:00', 30),
+      (4, 3, '10:00:00', '14:00:00', 30),
+      (4, 4, '10:00:00', '14:00:00', 30),
+      (4, 5, '10:00:00', '14:00:00', 30),
+      -- Dr. Andrés Martínez: Lunes, Miércoles, Viernes 11:00-15:00
+      (5, 1, '11:00:00', '15:00:00', 30),
+      (5, 3, '11:00:00', '15:00:00', 30),
+      (5, 5, '11:00:00', '15:00:00', 30),
+      -- Dra. Sofía Herrera: Martes y Jueves 8:30-12:30
+      (6, 2, '08:30:00', '12:30:00', 30),
+      (6, 4, '08:30:00', '12:30:00', 30),
+      -- Dr. Felipe Ruiz: Lunes a Viernes 9:00-13:00
+      (7, 1, '09:00:00', '13:00:00', 30),
+      (7, 2, '09:00:00', '13:00:00', 30),
+      (7, 3, '09:00:00', '13:00:00', 30),
+      (7, 4, '09:00:00', '13:00:00', 30),
+      (7, 5, '09:00:00', '13:00:00', 30),
+      -- Dra. Claudia Vargas: Lunes, Miércoles, Viernes 7:00-11:00
+      (8, 1, '07:00:00', '11:00:00', 30),
+      (8, 3, '07:00:00', '11:00:00', 30),
+      (8, 5, '07:00:00', '11:00:00', 30),
+      -- Dra. Valentina Torres: Martes y Jueves 13:00-17:00
+      (9, 2, '13:00:00', '17:00:00', 30),
+      (9, 4, '13:00:00', '17:00:00', 30),
+      -- Dr. Ricardo Salazar: Lunes a Viernes 15:00-19:00
+      (10, 1, '15:00:00', '19:00:00', 30),
+      (10, 2, '15:00:00', '19:00:00', 30),
+      (10, 3, '15:00:00', '19:00:00', 30),
+      (10, 4, '15:00:00', '19:00:00', 30),
+      (10, 5, '15:00:00', '19:00:00', 30)
     ON CONFLICT DO NOTHING;
 
     INSERT INTO appointments (id, doctor_name, specialty, appointment_date, appointment_time)
