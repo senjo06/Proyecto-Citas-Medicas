@@ -4,7 +4,7 @@ Aplicación fullstack para reservar citas médicas con control de concurrencia, 
 
 Este proyecto combina un frontend en Vue con un backend en Express y una base de datos PostgreSQL, y su objetivo principal es asegurar que dos pacientes no puedan reservar el mismo turno al mismo tiempo.
 
-## ✨ Características principales
+## Características principales
 
 - Reserva de citas médicas por especialista y fecha.
 - Gestión de usuarios con autenticación.
@@ -14,7 +14,7 @@ Este proyecto combina un frontend en Vue con un backend en Express y una base de
 - API REST documentada con Swagger.
 - Prevención de condiciones de carrera con `SELECT FOR UPDATE` en PostgreSQL.
 
-## 🧩 Stack tecnológico
+## Stack tecnológico
 
 ### Backend
 - Node.js
@@ -32,7 +32,7 @@ Este proyecto combina un frontend en Vue con un backend en Express y una base de
 - Axios
 - Vite
 
-## 🏗️ Arquitectura
+## Arquitectura
 
 ```text
 Frontend (Vue 3) :5173

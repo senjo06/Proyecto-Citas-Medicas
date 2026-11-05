@@ -54,6 +54,7 @@
               autocomplete="email"
               required
             />
+            <span v-if="form.email && !isEmailValid" class="field-error">Email inválido.</span>
           </div>
 
           <div class="form-group">
@@ -64,6 +65,7 @@
               type="tel"
               placeholder="Ej: +57 300 123 4567"
               autocomplete="tel"
+              required
             />
           </div>
 
@@ -74,16 +76,17 @@
                 id="password"
                 v-model="form.password"
                 :type="showPassword ? 'text' : 'password'"
-                placeholder="Mínimo 6 caracteres"
+                placeholder="Mínimo 8 caracteres, mayúscula y número"
                 autocomplete="new-password"
                 required
-                minlength="6"
+                minlength="8"
               />
               <button type="button" class="toggle-pw" @click="showPassword = !showPassword" :aria-label="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
                 {{ showPassword ? '' : '' }}
               </button>
             </div>
-            <span class="field-hint">La contraseña se almacena con hash bcrypt.</span>
+            <span v-if="form.password && !isPasswordStrong" class="field-error">Debe tener al menos 8 caracteres, una mayúscula y un número.</span>
+            <span v-else class="field-hint">La contraseña se almacena con hash bcrypt.</span>
           </div>
 
           <div class="form-actions">
@@ -202,6 +205,14 @@ const editingUser = ref<User | null>(null);
 const showPassword = ref(false);
 const form = ref({ name: '', email: '', password: '', phone: '' });
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const isEmailValid = computed(() => !form.value.email || emailRegex.test(form.value.email));
+const isPasswordStrong = computed(() => {
+  if (!form.value.password) return true; // En modo edición puede estar vacío
+  const pw = form.value.password;
+  return pw.length >= 8 && /[A-Z]/.test(pw) && /[0-9]/.test(pw);
+});
+
 // ── Modal de borrado ──
 const deleteModal = ref({ visible: false, userId: 0, userName: '' });
 
@@ -216,18 +227,22 @@ watch(() => userStore.successMessage, (msg) => {
 
 // ── Formulario ──
 const handleSubmit = async () => {
+  if (!isEmailValid.value) { userStore.error = 'Email inválido.'; return; }
+  if (!editingUser.value && !isPasswordStrong.value) { userStore.error = 'Contraseña débil.'; return; }
+  if (!form.value.phone) { userStore.error = 'Teléfono es obligatorio.'; return; }
+  
   if (editingUser.value) {
     await userStore.editUser(editingUser.value.id, {
       name: form.value.name,
       email: form.value.email,
-      phone: form.value.phone || undefined
+      phone: form.value.phone
     });
   } else {
     await userStore.addUser({
       name: form.value.name,
       email: form.value.email,
       password: form.value.password,
-      phone: form.value.phone || undefined
+      phone: form.value.phone
     });
   }
   if (!userStore.error) resetForm();
@@ -355,6 +370,7 @@ const initials = (name: string): string => {
   line-height: 1;
 }
 .field-hint { font-size: 0.78rem; color: #888; margin-top: 0.3rem; display: block; }
+.field-error { font-size: 0.78rem; color: #dc2626; margin-top: 0.25rem; display: block; }
 
 .form-actions { display: flex; gap: 0.75rem; margin-top: 1.25rem; }
 

@@ -21,17 +21,19 @@
         <div class="field">
           <label for="email">Correo electrónico</label>
           <input id="email" v-model="form.email" type="email" placeholder="Ej: juan@correo.com" required :disabled="loading" />
+          <span v-if="form.email && !isEmailValid" class="field-error">Email inválido.</span>
         </div>
         <div class="field">
-          <label for="phone">Teléfono <span class="opt">(opcional)</span></label>
-          <input id="phone" v-model="form.phone" type="tel" placeholder="Ej: +57 300 123 4567" :disabled="loading" />
+          <label for="phone">Teléfono</label>
+          <input id="phone" v-model="form.phone" type="tel" placeholder="Ej: +57 300 123 4567" required :disabled="loading" />
         </div>
         <div class="field">
           <label for="password">Contraseña</label>
           <div class="input-row">
-            <input id="password" v-model="form.password" :type="showPw ? 'text' : 'password'" placeholder="Mínimo 6 caracteres" required minlength="6" :disabled="loading" />
+            <input id="password" v-model="form.password" :type="showPw ? 'text' : 'password'" placeholder="Mínimo 8 caracteres, mayúscula y número" required minlength="8" :disabled="loading" />
             <button type="button" class="btn-toggle" @click="showPw = !showPw">{{ showPw ? 'Ocultar' : 'Mostrar' }}</button>
           </div>
+          <span v-if="form.password && !isPasswordStrong" class="field-error">Debe tener al menos 8 caracteres, una mayúscula y un número.</span>
         </div>
         <div class="field">
           <label for="confirm">Confirmar contraseña</label>
@@ -59,11 +61,27 @@ const showPw  = ref(false);
 const errorMsg   = ref<string|null>(null);
 const successMsg = ref<string|null>(null);
 const form = ref({ name:'', email:'', phone:'', password:'', confirm:'' });
-const canSubmit = computed(() => form.value.name && form.value.email && form.value.password.length >= 6 && form.value.password === form.value.confirm);
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const isEmailValid = computed(() => !form.value.email || emailRegex.test(form.value.email));
+const isPasswordStrong = computed(() => {
+  const pw = form.value.password;
+  return pw.length >= 8 && /[A-Z]/.test(pw) && /[0-9]/.test(pw);
+});
+const canSubmit = computed(() => 
+  form.value.name && 
+  isEmailValid.value && 
+  form.value.email &&
+  form.value.phone &&
+  isPasswordStrong.value && 
+  form.value.password === form.value.confirm
+);
 const handleRegister = async () => {
   errorMsg.value = null; loading.value = true;
+  if (!isEmailValid.value) { errorMsg.value = 'Email inválido.'; loading.value = false; return; }
+  if (!isPasswordStrong.value) { errorMsg.value = 'Contraseña débil. Debe tener al menos 8 caracteres, una mayúscula y un número.'; loading.value = false; return; }
   try {
-    await UserService.create({ name: form.value.name, email: form.value.email, password: form.value.password, phone: form.value.phone || undefined });
+    await UserService.create({ name: form.value.name, email: form.value.email, password: form.value.password, phone: form.value.phone });
     successMsg.value = 'Cuenta creada. Redirigiendo...';
     setTimeout(() => router.push('/'), 2000);
   } catch (e: any) { errorMsg.value = e.response?.data?.message || 'Error al crear la cuenta.'; }

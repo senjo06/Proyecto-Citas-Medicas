@@ -19,6 +19,9 @@
       </div>
 
       <div class="nav-end">
+        <button class="btn-theme" @click="toggleTheme" :aria-label="isDark ? 'Modo claro' : 'Modo oscuro'">
+          {{ isDark ? '☀️' : '🌙' }}
+        </button>
         <NotificationBell />
         <span class="nav-user">{{ authStore.user?.name }}</span>
         <button class="btn-nav-action" @click="handleLogout">Cerrar sesión</button>
@@ -41,12 +44,30 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth.store';
 import NotificationBell from '../components/NotificationBell.vue';
 const router    = useRouter();
 const authStore = useAuthStore();
 const handleLogout = () => { authStore.logout(); router.push('/'); };
+
+const isDark = ref(false);
+onMounted(() => {
+  const saved = localStorage.getItem('theme');
+  isDark.value = saved === 'dark';
+  if (isDark.value) document.documentElement.classList.add('dark');
+});
+const toggleTheme = () => {
+  isDark.value = !isDark.value;
+  if (isDark.value) {
+    document.documentElement.classList.add('dark');
+    localStorage.setItem('theme', 'dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+    localStorage.setItem('theme', 'light');
+  }
+};
 </script>
 
 <style scoped>
@@ -93,6 +114,18 @@ const handleLogout = () => { authStore.logout(); router.push('/'); };
 .nav-link.active { color: #bfdbfe; background: #1e3a5f; font-weight: 600; }
 
 .nav-end { display: flex; align-items: center; gap: 0.75rem; }
+.btn-theme {
+  padding: 0.4rem 0.6rem;
+  background: transparent;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  line-height: 1;
+  color: #cbd5e1;
+}
+.btn-theme:hover { background: #0f172a; }
 .nav-user { font-size: 0.83rem; color: #94a3b8; }
 .btn-nav-action {
   padding: 0.33rem 0.8rem;

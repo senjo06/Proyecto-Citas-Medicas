@@ -5,6 +5,14 @@ async function runMigrations() {
   console.log('⏳ Iniciando migración de la base de datos...');
 
   const sql = `
+    -- ── Tabla de doctores ────────────────────────────────────────────
+    CREATE TABLE IF NOT EXISTS doctors (
+        id         SERIAL PRIMARY KEY,
+        name       VARCHAR(150) NOT NULL,
+        specialty  VARCHAR(100) NOT NULL,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    );
+
     -- ── Tabla de usuarios ────────────────────────────────────────────
     CREATE TABLE IF NOT EXISTS users (
         id         SERIAL PRIMARY KEY,

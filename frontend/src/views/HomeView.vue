@@ -80,6 +80,16 @@
 
     <!-- Lista de doctores -->
     <div v-else-if="!selectedDoctorName">
+      <!-- Búsqueda -->
+      <div class="search-box">
+        <input 
+          v-model="searchQuery" 
+          type="text" 
+          placeholder="Buscar por nombre o especialidad..." 
+          class="search-input"
+        />
+        <span class="search-icon">🔍</span>
+      </div>
       <div class="doctors-grid">
         <button
           v-for="doc in doctors"
@@ -246,6 +256,7 @@ const allSlots       = ref<Slot[]>([]);
 const allDoctors     = ref<DoctorInfo[]>([]);
 const myAppointments = ref<Slot[]>([]);
 const reminder       = ref<Slot[]>([]);
+const searchQuery    = ref('');
 
 // ── Conflicto ─────────────────────────────────────────────────────
 const conflictVisible    = ref(false);
@@ -258,13 +269,22 @@ const selectedSpecialty = computed(() =>
   allDoctors.value.find((d: any) => (d.doctor_name ?? d.name) === selectedDoctorName.value)?.specialty ?? ''
 );
 
-const doctors = computed<DoctorInfo[]>(() =>
-  allDoctors.value.map((d: any) => ({
+const doctors = computed<DoctorInfo[]>(() => {
+  let list = allDoctors.value.map((d: any) => ({
     name:      d.doctor_name ?? d.name ?? '',
     specialty: d.specialty ?? '',
     available: allSlots.value.filter(s => s.doctor_name === (d.doctor_name ?? d.name)).length
-  }))
-);
+  }));
+  // Filtrar por búsqueda
+  if (searchQuery.value.trim()) {
+    const q = searchQuery.value.toLowerCase();
+    list = list.filter(d => 
+      d.name.toLowerCase().includes(q) || 
+      d.specialty.toLowerCase().includes(q)
+    );
+  }
+  return list;
+});
 
 // ── Calendario ────────────────────────────────────────────────────
 const today = new Date();
@@ -550,6 +570,12 @@ const initials = (name: string) => {
 
 /* Estado */
 .state-box { display: flex; flex-direction: column; align-items: center; gap: 0.65rem; padding: 3rem; background: white; border: 1px solid #e5e7eb; border-radius: 8px; color: #9ca3af; font-size: 0.9rem; }
+
+/* Búsqueda */
+.search-box { position: relative; margin-bottom: 1rem; }
+.search-input { width: 100%; padding: 0.65rem 1rem 0.65rem 2.75rem; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.9rem; color: #111827; background: white; transition: border-color 0.15s, box-shadow 0.15s; }
+.search-input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); outline: none; }
+.search-icon { position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); font-size: 1.1rem; pointer-events: none; opacity: 0.5; }
 
 /* Lista doctores */
 .doctors-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
