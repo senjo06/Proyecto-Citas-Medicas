@@ -233,14 +233,14 @@ const initials = (name: string) => {
   background: white; border-radius: 8px;
   padding: 1.1rem 1.5rem; margin-bottom: 1.5rem;
   box-shadow: none;
-  border: 1px solid #e5e7eb; flex-wrap: wrap;
+  border: 1px solid var(--color-border); flex-wrap: wrap;
 }
 .summary-card { display: flex; flex-direction: column; align-items: center; min-width: 80px; }
 .summary-number { font-size: 1.8rem; font-weight: 800; color: #1e293b; line-height: 1; }
 .summary-label { font-size: 0.72rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 0.2rem; }
 .summary-card.booked .summary-number { color: #e53935; }
 .summary-card.free .summary-number { color: #16a34a; }
-.summary-card.doctors-count .summary-number { color: #2563eb; }
+.summary-card.doctors-count .summary-number { color: var(--color-primary); }
 
 .btn-refresh {
   margin-left: auto; padding: 0.45rem 1rem;
@@ -255,7 +255,7 @@ const initials = (name: string) => {
 .doctor-panel-card {
   background: white; border-radius: 8px;
   box-shadow: none;
-  border: 1px solid #e5e7eb; overflow: hidden;
+  border: 1px solid var(--color-border); overflow: hidden;
 }
 
 /* Header del doctor */
@@ -268,7 +268,7 @@ const initials = (name: string) => {
 }
 .dp-avatar {
   width: 50px; height: 50px; border-radius: 50%; flex-shrink: 0;
-  background: linear-gradient(135deg, #2563eb, #1e293b);
+  background: linear-gradient(135deg, var(--color-primary), #1e293b);
   color: white; font-size: 1.1rem; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
 }
@@ -284,14 +284,14 @@ const initials = (name: string) => {
   height: 4px; background: #e9ecef;
 }
 .dp-progress-bar {
-  height: 100%; background: linear-gradient(90deg, #2563eb, #16a34a);
+  height: 100%; background: linear-gradient(90deg, var(--color-primary), #16a34a);
   transition: width 0.5s ease; border-radius: 2px;
 }
 
 /* Tabla */
 .dp-table-wrap { overflow-x: auto; }
 .dp-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; min-width: 560px; }
-.dp-table th { background: #f9fafb; color: #555; font-weight: 600; text-align: left; padding: 0.65rem 1rem; border-bottom: 2px solid #e9ecef; white-space: nowrap; }
+.dp-table th { background: var(--color-bg); color: #555; font-weight: 600; text-align: left; padding: 0.65rem 1rem; border-bottom: 2px solid #e9ecef; white-space: nowrap; }
 .dp-table td { padding: 0.6rem 1rem; border-bottom: 1px solid #f5f5f5; vertical-align: middle; }
 .dp-table tr:last-child td { border-bottom: none; }
 .dp-table tr.row-booked td { background: #fafffe; }
@@ -322,7 +322,7 @@ const initials = (name: string) => {
 }
 
 .specialty-badge {
-  display: inline-block; background: #eff6ff; color: #1d4ed8;
+  display: inline-block; background: var(--color-primary-lt); color: var(--color-primary-dk);
   font-size: 0.72rem; font-weight: 700; padding: 0.15rem 0.6rem;
   border-radius: 20px; text-transform: uppercase; letter-spacing: 0.4px;
 }
@@ -343,10 +343,10 @@ const initials = (name: string) => {
 }
 
 /* Botón outline */
-.btn-outline { padding: 0.5rem 1rem; background: white; color: #2563eb; border: 1.5px solid #2563eb; border-radius: 7px; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: all 0.18s; }
-.btn-outline:hover { background: #eff6ff; }
+.btn-outline { padding: 0.5rem 1rem; background: white; color: var(--color-primary); border: 1.5px solid var(--color-primary); border-radius: 7px; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: all 0.18s; }
+.btn-outline:hover { background: var(--color-primary-lt); }
 
 /* Spinner */
-.spinner { width: 38px; height: 38px; border: 4px solid #e0e0e0; border-top-color: #2563eb; border-radius: 50%; animation: spin 0.75s linear infinite; }
+.spinner { width: 38px; height: 38px; border: 4px solid #e0e0e0; border-top-color: var(--color-primary); border-radius: 50%; animation: spin 0.75s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 </style>

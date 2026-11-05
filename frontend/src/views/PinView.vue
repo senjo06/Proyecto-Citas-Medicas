@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="pin-page">
     <div class="pin-card">
 
@@ -216,7 +216,7 @@ const verifyPin = () => {
   grid-column: span 3;
   font-size: 1.1rem;
   padding: 0.75rem;
-  background: #fff3f3;
+  background: var(--color-surface)3f3;
   color: #e53935;
 }
 .key-wide:hover:not(:disabled) {

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="layout">
 
     <nav class="navbar">
@@ -154,7 +154,7 @@ const toggleTheme = () => {
   cursor: pointer;
   transition: all 0.15s;
 }
-.btn-nav-action:hover { border-color: #f1c9c9; color: #b93838; background: #fff7f7; }
+.btn-nav-action:hover { border-color: #f1c9c9; color: #b93838; background: var(--color-surface)7f7; }
 
 /* ── Contenido ── */
 .main-content {
@@ -171,7 +171,7 @@ const toggleTheme = () => {
 
 /* ── Footer ── */
 .footer {
-  background: #fff;
+  background: var(--color-surface);
   border-top: 1px solid #e7ecef;
   text-align: center;
   padding: 0.85rem;

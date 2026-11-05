@@ -91,8 +91,8 @@ const handleLogin = async () => {
 }
 
 .login-box {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 2.5rem 2rem;
   width: 100%;
@@ -104,12 +104,12 @@ const handleLogin = async () => {
 .login-head { text-align: center; margin-bottom: 1.75rem; }
 .login-logo {
   width: 48px; height: 48px; border-radius: 10px;
-  background: #eff6ff; margin: 0 auto 1rem;
+  background: var(--color-primary-lt); margin: 0 auto 1rem;
   display: flex; align-items: center; justify-content: center;
 }
-.login-logo svg { width: 26px; height: 26px; color: #2563eb; }
-.login-head h1 { font-size: 1.25rem; color: #111827; margin-bottom: 0.25rem; }
-.login-head p  { font-size: 0.85rem; color: #6b7280; }
+.login-logo svg { width: 26px; height: 26px; color: var(--color-primary); }
+.login-head h1 { font-size: 1.25rem; color: var(--color-text); margin-bottom: 0.25rem; }
+.login-head p  { font-size: 0.85rem; color: var(--color-text-3); }
 
 /* Alerta */
 .alert-error {
@@ -127,25 +127,25 @@ const handleLogin = async () => {
   display: block;
   font-size: 0.83rem;
   font-weight: 500;
-  color: #374151;
+  color: var(--color-text-2);
   margin-bottom: 0.35rem;
 }
 .field input {
   width: 100%;
   padding: 0.6rem 0.8rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-border-2);
   border-radius: 6px;
   font-size: 0.9rem;
-  color: #111827;
-  background: #fff;
+  color: var(--color-text);
+  background: var(--color-surface);
   transition: border-color 0.15s, box-shadow 0.15s;
   box-sizing: border-box;
 }
 .field input:focus {
-  border-color: #2563eb;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
 }
-.field input:disabled { background: #f9fafb; color: #9ca3af; }
+.field input:disabled { background: var(--color-bg); color: var(--color-text-4); }
 
 .input-row { position: relative; }
 .input-row input { padding-right: 5rem; }
@@ -153,28 +153,28 @@ const handleLogin = async () => {
   position: absolute; right: 0.65rem; top: 50%;
   transform: translateY(-50%);
   background: none; border: none;
-  font-size: 0.75rem; color: #6b7280;
+  font-size: 0.75rem; color: var(--color-text-3);
   font-weight: 500; cursor: pointer;
 }
-.btn-toggle:hover { color: #2563eb; }
+.btn-toggle:hover { color: var(--color-primary); }
 
 /* Botón submit */
 .btn-submit {
   width: 100%; margin-top: 0.5rem;
   padding: 0.65rem;
-  background: #2563eb;
+  background: var(--color-primary);
   color: white; border: none; border-radius: 7px;
   font-size: 0.92rem; font-weight: 600;
   cursor: pointer; transition: background 0.15s;
   display: flex; align-items: center; justify-content: center;
 }
-.btn-submit:hover:not(:disabled) { background: #1d4ed8; }
+.btn-submit:hover:not(:disabled) { background: var(--color-primary-dk); }
 .btn-submit:disabled { background: #93c5fd; cursor: not-allowed; }
 .loading-row { display: flex; align-items: center; gap: 0.5rem; }
 
 /* Link registro */
-.register-link { text-align: center; margin-top: 1.25rem; font-size: 0.85rem; color: #6b7280; }
-.register-link a { color: #2563eb; font-weight: 500; }
+.register-link { text-align: center; margin-top: 1.25rem; font-size: 0.85rem; color: var(--color-text-3); }
+.register-link a { color: var(--color-primary); font-weight: 500; }
 
 /* Spinner */
 .spin {

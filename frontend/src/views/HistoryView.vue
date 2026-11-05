@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="history-view">
 
     <header class="page-header">
@@ -107,27 +107,27 @@ const initials = (name: string) => {
 <style scoped>
 .history-view { width: 100%; }
 .page-header { margin-bottom: 1.5rem; }
-.page-header h1 { font-size: 1.35rem; font-weight: 600; color: #111827; margin-bottom: 0.2rem; }
-.subtitle { font-size: 0.85rem; color: #6b7280; }
+.page-header h1 { font-size: 1.35rem; font-weight: 600; color: var(--color-text); margin-bottom: 0.2rem; }
+.subtitle { font-size: 0.85rem; color: var(--color-text-3); }
 
-.state-box { display: flex; flex-direction: column; align-items: center; gap: 0.65rem; padding: 3rem; background: white; border: 1px solid #e5e7eb; border-radius: 8px; color: #9ca3af; font-size: 0.9rem; }
+.state-box { display: flex; flex-direction: column; align-items: center; gap: 0.65rem; padding: 3rem; background: white; border: 1px solid var(--color-border); border-radius: 8px; color: var(--color-text-4); font-size: 0.9rem; }
 
-.card { background: white; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
-.card-header { padding: 1rem 1.25rem; border-bottom: 1px solid #e5e7eb; }
-.card-header h2 { font-size: 0.9rem; font-weight: 600; color: #374151; }
+.card { background: white; border: 1px solid var(--color-border); border-radius: 8px; overflow: hidden; }
+.card-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--color-border); }
+.card-header h2 { font-size: 0.9rem; font-weight: 600; color: var(--color-text-2); }
 
 .table-wrap { overflow-x: auto; }
 .history-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; min-width: 560px; }
-.history-table th { background: #f9fafb; color: #6b7280; font-weight: 600; text-align: left; padding: 0.65rem 1rem; border-bottom: 1px solid #e5e7eb; white-space: nowrap; }
-.history-table td { padding: 0.65rem 1rem; border-bottom: 1px solid #f3f4f6; color: #374151; vertical-align: middle; }
+.history-table th { background: var(--color-bg); color: var(--color-text-3); font-weight: 600; text-align: left; padding: 0.65rem 1rem; border-bottom: 1px solid var(--color-border); white-space: nowrap; }
+.history-table td { padding: 0.65rem 1rem; border-bottom: 1px solid #f3f4f6; color: var(--color-text-2); vertical-align: middle; }
 .history-table tr:last-child td { border-bottom: none; }
-.history-table tr:hover td { background: #f9fafb; }
+.history-table tr:hover td { background: var(--color-bg); }
 
 .td-doctor { display: flex; align-items: center; gap: 0.6rem; font-weight: 500; white-space: nowrap; }
-.avatar { width: 30px; height: 30px; border-radius: 50%; background: #eff6ff; color: #2563eb; font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 1px solid #bfdbfe; flex-shrink: 0; }
+.avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--color-primary-lt); color: var(--color-primary); font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 1px solid #bfdbfe; flex-shrink: 0; }
 .badge { display: inline-block; background: #f1f5f9; color: #475569; font-size: 0.7rem; font-weight: 600; padding: 0.1rem 0.5rem; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.3px; border: 1px solid #e2e8f0; }
-.td-muted { color: #9ca3af; font-size: 0.82rem; }
+.td-muted { color: var(--color-text-4); font-size: 0.82rem; }
 
-.spinner { width: 32px; height: 32px; border: 3px solid #e5e7eb; border-top-color: #2563eb; border-radius: 50%; animation: spin 0.7s linear infinite; }
+.spinner { width: 32px; height: 32px; border: 3px solid var(--color-border); border-top-color: var(--color-primary); border-radius: 50%; animation: spin 0.7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 </style>
