@@ -57,6 +57,28 @@ FRONTEND (Vue 3 + Vite) :5173
 
 ## 4. Esquema Completo de Base de Datos
 
+### 4.0. Información de Conexión
+
+**Configuración de la base de datos:**
+- **Base de datos:** `citas_db`
+- **Usuario:** `postgres`
+- **Contraseña:** `1234`
+- **Host:** `localhost`
+- **Puerto:** `5432`
+
+**Archivo de configuración:** `backweb/backweb/.env`
+
+```env
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=citas_db
+DB_USER=postgres
+DB_PASSWORD=1234
+PORT=3000
+```
+
+---
+
 ### 4.1. Tabla `users` — Pacientes del sistema
 
 ```sql
