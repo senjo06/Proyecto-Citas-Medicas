@@ -21,45 +21,47 @@
     <div v-else-if="scheduleStore.error" class="error">{{ scheduleStore.error }}</div>
 
     <div v-else class="schedules-grid">
-      <div v-if="filteredSchedules.length === 0" class="empty-state">
+      <div v-if="groupedDoctors.length === 0" class="empty-state">
         <p>No hay horarios configurados</p>
         <p class="text-muted">Agrega horarios para que los doctores puedan recibir citas</p>
       </div>
 
-      <div v-for="schedule in filteredSchedules" :key="schedule.id" class="schedule-card">
+      <div v-for="group in groupedDoctors" :key="group.doctor_id" class="schedule-card">
         <div class="card-header">
           <div>
-            <h3>{{ schedule.doctor_name }}</h3>
-            <span class="specialty">{{ schedule.specialty }}</span>
+            <h3>{{ group.doctor_name }}</h3>
+            <span class="specialty">{{ group.specialty }}</span>
           </div>
-          <span :class="['status-badge', schedule.is_active ? 'active' : 'inactive']">
-            {{ schedule.is_active ? 'Activo' : 'Inactivo' }}
-          </span>
         </div>
         
         <div class="card-body">
-          <div class="schedule-info">
-            <div class="info-row">
-              <strong>Día:</strong>
-              <span>{{ schedule.day_name }}</span>
-            </div>
-            <div class="info-row">
-              <strong>Horario:</strong>
-              <span>{{ formatTime(schedule.start_time) }} - {{ formatTime(schedule.end_time) }}</span>
-            </div>
-            <div class="info-row">
-              <strong>Duración citas:</strong>
-              <span>{{ schedule.duration_minutes }} min</span>
+          <div class="schedules-list">
+            <div v-for="schedule in group.schedules" :key="schedule.id" class="schedule-item">
+              <div class="schedule-item-header">
+                <strong>{{ schedule.day_name }}</strong>
+                <span :class="['status-badge-sm', schedule.is_active ? 'active' : 'inactive']">
+                  {{ schedule.is_active ? 'Activo' : 'Inactivo' }}
+                </span>
+              </div>
+              <div class="schedule-item-info">
+                <span>{{ formatTime(schedule.start_time) }} - {{ formatTime(schedule.end_time) }}</span>
+                <span class="duration">{{ schedule.duration_minutes }} min</span>
+              </div>
+              <div class="schedule-item-actions">
+                <button @click="editSchedule(schedule)" class="btn-icon" title="Editar">✏️</button>
+                <button @click="toggleActive(schedule)" class="btn-icon" :title="schedule.is_active ? 'Desactivar' : 'Activar'">
+                  {{ schedule.is_active ? '⏸️' : '▶️' }}
+                </button>
+                <button @click="confirmDelete(schedule)" class="btn-icon" title="Eliminar">🗑️</button>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="card-actions">
-          <button @click="editSchedule(schedule)" class="btn-secondary">Editar</button>
-          <button @click="toggleActive(schedule)" class="btn-secondary">
-            {{ schedule.is_active ? 'Desactivar' : 'Activar' }}
+        <div class="card-footer">
+          <button @click="addScheduleForDoctor(group.doctor_id, group.doctor_name)" class="btn-add-schedule">
+            + Agregar horario
           </button>
-          <button @click="confirmDelete(schedule)" class="btn-danger">Eliminar</button>
         </div>
       </div>
     </div>
@@ -148,6 +150,30 @@ const doctors = computed(() => doctorStore.doctors);
 const filteredSchedules = computed(() => {
   if (!selectedDoctorId.value) return scheduleStore.schedules;
   return scheduleStore.schedules.filter(s => s.doctor_id === Number(selectedDoctorId.value));
+});
+
+// Agrupar horarios por doctor
+const groupedDoctors = computed(() => {
+  const map = new Map();
+  
+  filteredSchedules.value.forEach(schedule => {
+    if (!map.has(schedule.doctor_id)) {
+      map.set(schedule.doctor_id, {
+        doctor_id: schedule.doctor_id,
+        doctor_name: schedule.doctor_name,
+        specialty: schedule.specialty,
+        schedules: []
+      });
+    }
+    map.get(schedule.doctor_id).schedules.push(schedule);
+  });
+  
+  // Ordenar horarios dentro de cada doctor por día de la semana
+  map.forEach(group => {
+    group.schedules.sort((a, b) => a.day_of_week - b.day_of_week);
+  });
+  
+  return Array.from(map.values());
 });
 
 onMounted(async () => {
@@ -243,6 +269,11 @@ function resetForm() {
     end_time: '12:00',
     duration_minutes: 30
   };
+}
+
+function addScheduleForDoctor(doctorId: number, doctorName: string) {
+  formData.value.doctor_id = doctorId.toString();
+  showCreateModal.value = true;
 }
 </script>
 
@@ -381,65 +412,106 @@ function resetForm() {
   padding: 1.25rem;
 }
 
-.schedule-info {
+.schedules-list {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
 
-.info-row {
+.schedule-item {
+  padding: 0.75rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.schedule-item-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.schedule-item-header strong {
+  color: var(--color-text);
   font-size: 0.9rem;
 }
 
-.info-row strong {
+.status-badge-sm {
+  padding: 0.15rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge-sm.active {
+  background: var(--color-success-lt);
+  color: var(--color-success);
+}
+
+.status-badge-sm.inactive {
+  background: var(--color-border);
+  color: var(--color-text-3);
+}
+
+.schedule-item-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
   color: var(--color-text-2);
 }
 
-.info-row span {
-  color: var(--color-text);
+.duration {
+  color: var(--color-text-3);
+  font-size: 0.8rem;
 }
 
-.card-actions {
+.schedule-item-actions {
   display: flex;
   gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.btn-icon {
+  padding: 0.25rem 0.5rem;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.btn-icon:hover {
+  background: var(--color-border);
+  transform: scale(1.1);
+}
+
+.card-footer {
   padding: 1rem 1.25rem;
   background: var(--color-bg);
   border-top: 1px solid var(--color-border);
 }
 
-.btn-secondary {
-  flex: 1;
+.btn-add-schedule {
+  width: 100%;
   padding: 0.5rem 1rem;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  background: transparent;
+  border: 1px dashed var(--color-border-2);
   border-radius: var(--radius-md);
-  color: var(--color-text-2);
+  color: var(--color-primary);
   font-size: 0.85rem;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.btn-secondary:hover {
-  background: var(--color-border);
-}
-
-.btn-danger {
-  flex: 1;
-  padding: 0.5rem 1rem;
-  background: var(--color-danger-lt);
-  border: 1px solid var(--color-danger);
-  border-radius: var(--radius-md);
-  color: var(--color-danger);
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-danger:hover {
-  background: var(--color-danger);
-  color: white;
+.btn-add-schedule:hover {
+  background: var(--color-primary-lt);
+  border-color: var(--color-primary);
 }
 
 /* Modal */
@@ -508,6 +580,21 @@ function resetForm() {
 
 .modal-actions button {
   flex: 1;
+}
+
+.modal-actions .btn-secondary {
+  padding: 0.6rem 1rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-2);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-actions .btn-secondary:hover {
+  background: var(--color-border);
 }
 
 @media (max-width: 768px) {
