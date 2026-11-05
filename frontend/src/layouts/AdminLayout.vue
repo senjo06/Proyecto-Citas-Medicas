@@ -16,7 +16,6 @@
         <router-link to="/admin/hoy"        class="nav-link" active-class="active">Agenda de hoy</router-link>
         <router-link to="/admin/reservados" class="nav-link" active-class="active">Reservados</router-link>
         <router-link to="/admin/usuarios"   class="nav-link" active-class="active">Usuarios</router-link>
-        <router-link to="/admin/horarios"   class="nav-link" active-class="active">Horarios</router-link>
       </div>
 
       <div class="nav-end">

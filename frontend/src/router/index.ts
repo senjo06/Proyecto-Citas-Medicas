@@ -9,7 +9,6 @@ import ProfileView from '../views/ProfileView.vue';
 import RegisterView from '../views/RegisterView.vue';
 import DoctorPanelView from '../views/DoctorPanelView.vue';
 import HistoryView from '../views/HistoryView.vue';
-import DoctorSchedulesView from '../views/DoctorSchedulesView.vue';
 
 const routes = [
   // ── Login (pública) ───────────────────────────────────────────────
@@ -70,11 +69,6 @@ const routes = [
         path: 'usuarios',
         name: 'admin-usuarios',
         component: UsersView
-      },
-      {
-        path: 'horarios',
-        name: 'admin-horarios',
-        component: DoctorSchedulesView
       }
     ]
   }
